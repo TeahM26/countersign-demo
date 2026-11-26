@@ -3,233 +3,367 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Countersign – Live Demo</title>
+<title>Countersign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..700&display=swap">
 <style>
 :root{
-  --navy:#14213D; --teal:#1F7A8C; --teal-l:#E8F1F3; --ink:#1E2430; --muted:#5A6270; --line:#DCE3E8;
-  --bg:#EEF2F5; --ok:#2E9E5B; --ok-l:#E6F4EC; --hold:#C98A00; --hold-l:#FFF4D6; --deny:#C8423B; --deny-l:#FBE9E7;
-  --na:#8A94A3;
+  --bg:#F2F3F6; --surface:#FFFFFF; --surface-2:#F7F8FA; --line:#E4E6EC; --line-2:#D4D7DF;
+  --ink:#17151F; --ink-2:#4B4A57; --ink-3:#7D7B8A;
+  --iris:#4F2FE6; --iris-2:#3E1FD0; --iris-tint:#EFEBFE; --iris-line:#D8D0FB;
+  --ok:#0F7A55; --ok-tint:#E5F3ED; --hold:#9C5A00; --hold-tint:#FBF0DF; --deny:#B3261E; --deny-tint:#FBEAE8;
+  --ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --display:"Bricolage Grotesque",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.2,.8,.2,1); --spring:cubic-bezier(.34,1.45,.64,1);
+  --lift:0 1px 0 rgba(23,21,31,.04),0 10px 30px -18px rgba(23,21,31,.28);
+  --float:0 0 0 1px rgba(23,21,31,.07),0 28px 70px -24px rgba(23,21,31,.42),0 8px 18px -10px rgba(23,21,31,.18);
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
-body{font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);display:flex;flex-direction:column;font-size:14px}
-button{font-family:inherit;cursor:pointer}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+body{font:14px/1.45 var(--ui);color:var(--ink);background:var(--bg);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 0}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--iris);outline-offset:2px;border-radius:8px}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:-.01em}
+.muted{color:var(--ink-3)}
+svg{display:block}
 
-/* Header */
-header{background:var(--navy);color:#fff;display:flex;align-items:center;gap:18px;padding:10px 18px;flex-wrap:wrap}
+/* ---------- top bar ---------- */
+.top{display:flex;align-items:center;gap:20px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;margin-right:8px}
-.brand h1{font-size:20px;margin:0;letter-spacing:.2px}
-.brand small{display:block;color:#AFC3D6;font-size:11.5px;font-weight:400}
-.scen{display:flex;gap:8px;flex-wrap:wrap}
-.scen button{background:#22335A;color:#fff;border:1px solid #33497A;border-radius:8px;padding:8px 12px;font-size:13px;display:flex;gap:8px;align-items:center}
-.scen button:hover{background:#2B4170}
-.scen button.active{background:var(--teal);border-color:var(--teal)}
-.scen .n{background:rgba(255,255,255,.15);border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700}
+.brand b{font-family:var(--display);font-weight:650;font-size:20px;letter-spacing:-.02em}
+.seg{position:relative;display:flex;align-items:center;gap:2px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg .thumb{position:absolute;top:3px;bottom:3px;left:0;width:0;border-radius:9px;background:var(--surface);box-shadow:0 1px 2px rgba(23,21,31,.08),0 0 0 1px rgba(23,21,31,.06);transition:transform .38s var(--ease),width .38s var(--ease);pointer-events:none}
+.seg button{position:relative;z-index:1;padding:7px 11px;border-radius:9px;color:var(--ink-2);display:flex;align-items:center;gap:8px;white-space:nowrap;transition:color .2s}
+.seg button:hover{color:var(--ink)}
+.seg button.on{color:var(--ink);font-weight:600}
+.seg button .k{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums;border:1px solid var(--line-2);border-radius:5px;padding:0 5px;line-height:16px}
+.seg button.on .k{border-color:var(--iris-line);color:var(--iris)}
+#scenSeg .thumb{background:var(--iris);box-shadow:0 1px 2px rgba(79,47,230,.35),0 6px 16px -8px rgba(79,47,230,.7)}
+#scenSeg button.on{color:#fff}
+#scenSeg button.on .k{border-color:rgba(255,255,255,.45);color:#fff}
+.seg .sep{width:1px;align-self:stretch;margin:5px 6px;background:var(--line-2)}
 .spacer{flex:1}
-.ghost{background:transparent;color:#C9D6E5;border:1px solid #3B4E78;border-radius:8px;padding:7px 12px;font-size:13px}
-.ghost:hover{color:#fff;border-color:#fff}
+.reset{color:var(--ink-2);padding:8px 10px;border-radius:9px}
+.reset:hover{background:var(--surface-2);color:var(--ink)}
 
-/* Layout */
-main{flex:1;display:grid;grid-template-columns:1.12fr 1fr;gap:14px;padding:14px;min-height:0}
-.pane{display:flex;flex-direction:column;min-height:0}
-.pane-title{display:flex;align-items:baseline;gap:10px;margin:0 0 8px 2px}
-.pane-title h2{font-size:13px;text-transform:uppercase;letter-spacing:1.2px;color:var(--navy);margin:0}
-.pane-title span{color:var(--muted);font-size:12.5px}
+/* ---------- layout ---------- */
+main{flex:1;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:18px;padding:18px 20px 20px;min-height:0}
+main.v-shopper{grid-template-columns:minmax(0,1fr)} main.v-shopper #paneBiz{display:none}
+main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{display:none}
+.pane{display:flex;flex-direction:column;min-height:0;min-width:0}
+.pane-h{display:flex;align-items:baseline;gap:10px;margin:0 2px 10px}
+.pane-h h2{margin:0;font-size:15px;font-weight:600}
+.pane-h span{color:var(--ink-3);font-size:13px}
 
-/* Browser mock */
-.browser{flex:1;background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(20,33,61,.08);display:flex;flex-direction:column;overflow:hidden;position:relative;min-height:0}
-.chrome{background:#E9EDF1;padding:8px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
-.dots{display:flex;gap:6px}.dots i{width:11px;height:11px;border-radius:50%;background:#C9CFD6;display:block}
-.dots i:nth-child(1){background:#F06A5F}.dots i:nth-child(2){background:#F4BF4F}.dots i:nth-child(3){background:#61C454}
-.url{flex:1;background:#fff;border-radius:16px;padding:6px 12px;font-size:13px;color:#333;display:flex;align-items:center;gap:8px;border:1px solid var(--line)}
-.url .lock{color:#6B7785}
-.ext-btn{width:34px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;position:relative;display:flex;align-items:center;justify-content:center}
-.ext-btn .badge{position:absolute;right:-5px;top:-5px;min-width:16px;height:16px;border-radius:8px;font-size:10px;color:#fff;display:none;align-items:center;justify-content:center;padding:0 4px;font-weight:700}
+/* ---------- browser ---------- */
+.browser{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;background:var(--surface);border-radius:14px;box-shadow:var(--lift);border:1px solid var(--line);overflow:hidden}
+.chrome{display:flex;align-items:center;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.lights{display:flex;gap:6px}.lights i{width:10px;height:10px;border-radius:50%;background:#D9DBE1}
+.navs{display:flex;gap:6px;color:#B3B5BE}
+.url{flex:1;display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:6px 10px;font-size:13px;color:var(--ink-2);min-width:0}
+.url .host{color:var(--ink);font-weight:500}
+.url span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.extbtn{position:relative;width:32px;height:30px;border-radius:8px;display:grid;place-items:center}
+.extbtn:hover{background:var(--surface)}
+.extbtn .dot{position:absolute;right:3px;top:3px;width:9px;height:9px;border-radius:50%;border:2px solid var(--surface-2);transform:scale(0);transition:transform .35s var(--spring)}
+.extbtn .dot.on{transform:scale(1)}
 .page{flex:1;overflow:auto;position:relative}
-.empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:30px}
-.empty h3{color:var(--navy);margin:10px 0 6px}
 
-/* Merchant pages */
-.mhead{padding:16px 24px;display:flex;align-items:center;gap:12px;color:#fff}
-.mhead .logo{font-weight:800;font-size:19px}
-.mhead .nav{margin-left:auto;opacity:.85;font-size:13px;display:flex;gap:16px}
-.mbody{padding:22px 24px;display:grid;grid-template-columns:1.2fr 1fr;gap:20px}
-.product{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;gap:14px}
-.pimg{width:96px;height:96px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;font-size:40px}
-.product h4{margin:0 0 4px;font-size:16px}
-.product p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
-.summary{border:1px solid var(--line);border-radius:12px;padding:16px}
-.summary .row{display:flex;justify-content:space-between;margin:6px 0;font-size:13.5px}
-.summary .total{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;font-weight:700;font-size:16px}
-.payfrom{background:#F5F7F9;border-radius:8px;padding:8px 10px;font-size:12.5px;margin:12px 0;color:var(--muted)}
-.paybtn{width:100%;border:0;border-radius:10px;padding:12px;font-size:15px;font-weight:700;color:#fff}
-.paybtn:disabled{opacity:.55;cursor:default}
-.mstatus{margin-top:12px;border-radius:10px;padding:10px 12px;font-size:13px;display:none}
-.scamhero{padding:26px 24px;color:#fff;background:linear-gradient(135deg,#0B3D2E,#146C4E)}
-.scamhero h3{font-size:26px;margin:0 0 6px}
-.scamhero .fca{display:inline-block;background:rgba(255,255,255,.15);border-radius:6px;padding:4px 8px;font-size:12px;margin-top:8px}
-.ticker{display:flex;gap:16px;font-size:12.5px;margin-top:14px;opacity:.9}
+/* merchant site */
+.site{min-height:100%;display:flex;flex-direction:column;animation:fade .35s var(--ease)}
+@keyframes fade{from{opacity:0}}
+.m-nav{display:flex;align-items:center;gap:22px;padding:16px 26px;color:#fff}
+.m-nav .logo{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.m-nav .links{margin-left:auto;display:flex;gap:18px;font-size:13px;opacity:.8}
+.m-body{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px;padding:24px 26px 30px}
+.prod .art{aspect-ratio:4/3;border-radius:12px;display:grid;place-items:center;margin-bottom:16px}
+.prod h4{margin:0;font-size:18px;letter-spacing:-.01em}
+.prod .variant{color:var(--ink-3);margin-top:2px}
+.prod p{color:var(--ink-2);margin:10px 0 0;font-size:13px;max-width:44ch}
+.co{border:1px solid var(--line);border-radius:12px;padding:18px;align-self:start;background:var(--surface)}
+.co h5{margin:0 0 10px;font-size:13px;font-weight:600}
+.co .line{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-2);padding:3px 0}
+.co .total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);margin-top:8px;padding-top:10px;font-weight:600}
+.co .total b{font-size:18px;font-weight:650;letter-spacing:-.01em}
+.methods{margin-top:16px;display:flex;flex-direction:column;gap:6px}
+.method{display:grid;grid-template-columns:18px 26px 1fr;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink-3)}
+.method .radio{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--line-2)}
+.method b{display:block;color:var(--ink-2);font-weight:600}
+.method small{display:block;font-size:12px}
+.method.on{border-color:var(--ink);color:var(--ink-2);box-shadow:0 0 0 1px var(--ink)}
+.method.on b{color:var(--ink)}
+.method.on .radio{border:5px solid var(--ink)}
+.wallets{margin:8px 0 2px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.wallets .wh{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-3);padding:8px 12px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+.wallet{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:10px 12px;font-size:13px;opacity:.5}
+.wallet+.wallet{border-top:1px solid var(--line)}
+.wallet.on{opacity:1}
+.wallet .ico{width:28px;height:28px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-2)}
+.wallet b{display:block;font-weight:600}
+.wallet small{display:block;color:var(--ink-3);font-size:12px;white-space:nowrap}
+.wallet .bal{text-align:right;font-size:12px;color:var(--ink-2)}
+.paybtn{width:100%;margin-top:14px;border-radius:10px;padding:12px 14px;color:#fff;font-weight:600;font-size:14px;transition:transform .15s var(--ease),opacity .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.paybtn:active{transform:scale(.985)}
+.paybtn:disabled{cursor:default}
+.paybtn.busy{opacity:.85}
+.paybtn.done{opacity:.55}
+.guard{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--ink-3);margin-top:10px}
+.mstatus{margin-top:12px;font-size:13px;border-radius:10px;padding:10px 12px;display:none;animation:rise .35s var(--ease)}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}}
 
-/* Extension popup */
-.ext{position:absolute;top:50px;right:12px;width:360px;max-height:calc(100% - 62px);overflow:auto;background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(20,33,61,.28);border:1px solid var(--line);display:none;z-index:5;animation:pop .18s ease-out}
-@keyframes pop{from{transform:translateY(-6px);opacity:0}to{transform:none;opacity:1}}
-.ext-h{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
-.ext-h b{color:var(--navy)}
-.ext-h small{color:var(--muted);margin-left:auto;font-size:11px}
-.ext-s{padding:12px 14px}
-.checks{list-style:none;margin:0;padding:0}
-.checks li{display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed #EDF0F3;font-size:13px;opacity:0;transform:translateY(3px);transition:all .2s}
+/* clone site */
+.scam{background:#0B3D2E;color:#fff;padding:22px 26px 26px}
+.scam .logo{font-weight:700;font-size:17px}
+.scam h3{font-size:28px;line-height:1.1;letter-spacing:-.02em;margin:22px 0 8px;font-weight:700;max-width:18ch}
+.scam p{margin:0;opacity:.85;font-size:13px}
+.scam .badges{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;font-size:12px}
+.scam .badges span{background:rgba(255,255,255,.12);border-radius:6px;padding:4px 8px}
+
+/* ---------- extension sheet ---------- */
+.ext{position:absolute;top:50px;right:12px;width:372px;max-height:calc(100% - 62px);overflow:auto;background:var(--surface);border-radius:16px;box-shadow:var(--float);z-index:5;transform-origin:top right;display:none}
+.ext.open{display:block;animation:sheet .32s var(--ease)}
+@keyframes sheet{from{opacity:0;transform:translateY(-6px) scale(.97)}}
+.ext-h{display:flex;align-items:center;gap:9px;padding:14px 16px 12px}
+.ext-h b{font-family:var(--display);font-weight:650;font-size:16px;letter-spacing:-.01em}
+.ext-h small{margin-left:auto;color:var(--ink-3);font-size:12px}
+.ext-pay{margin:0 16px;padding:12px 14px;border-radius:12px;background:var(--surface-2);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ext-pay b{font-size:20px;font-weight:650;letter-spacing:-.02em}
+.ext-pay small{display:block;color:var(--ink-3);font-size:12px}
+.rail{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.rail.cbdc{color:var(--iris);border-color:var(--iris-line);background:var(--iris-tint)}
+.checks{list-style:none;margin:10px 0 0;padding:0 16px}
+.checks li{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:9px 0;opacity:0;transform:translateY(4px);transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.checks li+li{border-top:1px solid var(--line)}
 .checks li.show{opacity:1;transform:none}
-.checks li:last-child{border-bottom:0}
-.ic{width:20px;height:20px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700;margin-top:1px}
-.ic.pass{background:var(--ok)}.ic.fail{background:var(--deny)}.ic.warn{background:var(--hold)}.ic.na{background:#C3CAD3}
-.ic.spin{border:2px solid #CBD5DF;border-top-color:var(--teal);background:transparent;animation:spin .7s linear infinite}
+.checks .t{font-weight:600;font-size:13px}
+.checks .d{color:var(--ink-3);font-size:12px;line-height:1.4;margin-top:1px}
+.ic{width:20px;height:20px;min-width:20px;flex:none;border-radius:50%;display:grid;place-items:center;margin-top:1px;overflow:hidden}
+.ic.pending{color:var(--iris)}
+.spin{width:14px;height:14px;flex:none;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.checks .t{font-weight:600}
-.checks .d{color:var(--muted);font-size:12px;line-height:1.35;margin-top:1px}
-.decision{border-radius:12px;padding:12px 14px;margin-top:10px;display:none}
-.decision h3{margin:0 0 4px;font-size:16px;display:flex;align-items:center;gap:8px}
-.decision p{margin:4px 0;font-size:13px;line-height:1.45}
-.decision.APPROVE{background:var(--ok-l);border:1px solid #BFE3CD}.decision.APPROVE h3{color:var(--ok)}
-.decision.HOLD{background:var(--hold-l);border:1px solid #F0D58A}.decision.HOLD h3{color:#9A6A00}
-.decision.DENY{background:var(--deny-l);border:1px solid #F2C3BE}.decision.DENY h3{color:var(--deny)}
-.decision.NEUTRAL{background:#F1F3F6;border:1px solid var(--line)}.decision.NEUTRAL h3{color:#3D4756}
-.fb{display:flex;flex-direction:column;gap:6px;margin-top:8px}
-.fb button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px;font-size:12.5px;text-align:left}
-.fb button:hover{border-color:var(--teal)}
-.next{font-size:12.5px;margin:6px 0 0;padding-left:18px}
-.next li{margin:2px 0}
-.escrow{display:flex;align-items:center;gap:8px;background:#fff;border:1px dashed #D9B24A;border-radius:8px;padding:7px 9px;font-size:12px;margin-top:8px}
+.ic.pass{background:var(--ok-tint);color:var(--ok)}
+.ic.fail{background:var(--deny-tint);color:var(--deny)}
+.ic.warn{background:var(--hold-tint);color:var(--hold)}
+.ic.na{background:var(--surface-2);color:var(--ink-3)}
+.ic.inherit{background:var(--iris-tint);color:var(--iris)}
+.ic svg path{stroke-dasharray:24;stroke-dashoffset:24;animation:draw .35s .05s var(--ease) forwards}
+.verdict{margin:12px 16px 16px;border-radius:14px;padding:16px;display:none}
+.verdict.show{display:block;animation:rise .4s var(--ease)}
+.verdict .vh{display:flex;align-items:center;gap:10px}
+.verdict h3{margin:0;font-family:var(--display);font-size:19px;font-weight:650;letter-spacing:-.015em}
+.verdict p{margin:10px 0 0;font-size:13px;color:var(--ink-2)}
+.verdict.ok{background:var(--ok-tint)}.verdict.ok h3{color:var(--ok)}
+.verdict.hold{background:var(--hold-tint)}.verdict.hold h3{color:var(--hold)}
+.verdict.deny{background:var(--deny-tint)}.verdict.deny h3{color:var(--deny)}
+.verdict.neutral{background:var(--surface-2)}.verdict.neutral h3{color:var(--ink)}
+.verdict ul{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--ink-2)}
+.verdict li{margin:3px 0}
+.escrow{display:flex;gap:10px;align-items:flex-start;margin-top:12px;background:rgba(255,255,255,.65);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink-2)}
+.escrow svg{flex:none;margin-top:1px}
+.ask{margin-top:14px}
+.ask b{display:block;font-size:13px;margin-bottom:8px}
+.ask button{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid rgba(23,21,31,.08);border-radius:10px;padding:10px 12px;font-size:13px;margin-top:6px;transition:border-color .2s,transform .15s var(--ease)}
+.ask button:hover{border-color:var(--ink)}
+.ask button:active{transform:scale(.99)}
+.answered{margin-top:12px;font-size:13px;background:rgba(255,255,255,.65);border-radius:10px;padding:10px 12px;animation:rise .35s var(--ease)}
 
-/* Business console */
-.console{flex:1;background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(20,33,61,.08);display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.c-head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:#F8FAFB}
-.c-head b{color:var(--navy)}
-.c-head .who{margin-left:auto;font-size:12px;color:var(--muted)}
-.tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line)}
-.tabs button{border:0;background:none;padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:2px solid transparent;display:flex;gap:6px;align-items:center}
-.tabs button.active{color:var(--navy);border-bottom-color:var(--teal);font-weight:600}
-.cnt{background:var(--hold);color:#fff;border-radius:9px;font-size:10.5px;padding:1px 6px;font-weight:700;display:none}
-.tab{flex:1;overflow:auto;padding:14px;display:none}
-.tab.active{display:block}
-.muted{color:var(--muted)}
-.card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px}
-.card .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.pill{display:inline-block;border-radius:20px;padding:2px 9px;font-size:11.5px;font-weight:700;letter-spacing:.3px}
-.pill.APPROVE{background:var(--ok-l);color:var(--ok)}.pill.HOLD{background:var(--hold-l);color:#9A6A00}.pill.DENY{background:var(--deny-l);color:var(--deny)}
-.pill.REVIEWED{background:var(--teal-l);color:var(--teal)}
-.kv{display:grid;grid-template-columns:120px 1fr;gap:4px 10px;font-size:12.5px;margin:10px 0}
-.kv div:nth-child(odd){color:var(--muted)}
-.reason{background:#F7F9FB;border-left:3px solid var(--teal);border-radius:6px;padding:8px 10px;font-size:12.5px;margin:6px 0;line-height:1.45}
-.reason.warn{border-left-color:var(--hold)}.reason.bad{border-left-color:var(--deny)}
-.reason .rid{font-weight:700;color:var(--navy)}
-.actions{display:flex;gap:8px;margin-top:10px}
-.btn{border:0;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600}
-.btn.ok{background:var(--ok);color:#fff}.btn.no{background:var(--deny);color:#fff}
-.btn.sec{background:#fff;border:1px solid var(--line);color:var(--ink)}
-.btn.pri{background:var(--teal);color:#fff}
-.btn:disabled{opacity:.5;cursor:default}
-table{border-collapse:collapse;width:100%;font-size:12.5px}
-th{text-align:left;color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;padding:6px 8px;border-bottom:1px solid var(--line)}
-td{padding:8px;border-bottom:1px solid #EEF1F4;vertical-align:top}
-.rule{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
-.rule .rh{display:flex;gap:8px;align-items:center}
-.rule .rh b{color:var(--navy)}
-.rule .src{font-size:11.5px;color:var(--teal);margin-top:4px}
-.rule .cond{font-size:12.5px;margin-top:4px}
-.edit{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12.5px}
-.edit input{width:84px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;font-family:inherit}
-.pending{background:var(--hold-l);border:1px solid #F0D58A;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:12.5px}
-.bar{height:8px;border-radius:4px;background:#EEF1F4;overflow:hidden;margin:4px 0 8px}
-.bar i{display:block;height:100%;background:var(--hold)}
-.audit-ok{background:var(--ok-l);color:var(--ok);border-radius:8px;padding:8px 10px;font-size:12.5px;margin-bottom:10px;display:none}
-.audit-bad{background:var(--deny-l);color:var(--deny);border-radius:8px;padding:8px 10px;font-size:12.5px;margin-bottom:10px;display:none}
-.ae{display:grid;grid-template-columns:34px 1fr;gap:8px;border-bottom:1px solid #EEF1F4;padding:8px 0;font-size:12.5px}
-.ae.broken{background:var(--deny-l)}
-.ae .seq{color:var(--muted);font-weight:700}
-.ae .ev{font-weight:700;color:var(--navy)}
-.ae .hash{color:var(--muted);margin-top:2px}
-.toolbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
-.toast{position:fixed;right:18px;bottom:44px;background:var(--navy);color:#fff;padding:10px 14px;border-radius:10px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:20}
-.toast.show{opacity:1;transform:none}
-footer{padding:6px 18px;font-size:11.5px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
-.flag{background:var(--deny-l);color:var(--deny);border-radius:6px;padding:6px 8px;font-size:12px;margin-top:6px;font-weight:600}
-.flag.good{background:var(--ok-l);color:var(--ok)}
-@media (max-width:1100px){main{grid-template-columns:1fr}.mbody{grid-template-columns:1fr}}
+/* seal: the shared decision mark */
+.seal{flex:none}
+.seal{animation:sealIn .4s var(--spring) both}
+@keyframes sealIn{from{opacity:0;transform:scale(.6)}}
+.seal .glyph{stroke-dasharray:70;stroke-dashoffset:70;animation:draw .4s .15s var(--ease) forwards}
+.seal.still,.seal.still .glyph{animation:none;stroke-dashoffset:0}
+@keyframes draw{to{stroke-dashoffset:0}}
 
-/* Flask version additions */
-.views{display:flex;background:#1B2A4C;border-radius:8px;padding:3px;gap:2px}
-.views button{background:none;border:0;color:#AFC3D6;padding:6px 10px;border-radius:6px;font-size:12.5px}
-.views button.active{background:#fff;color:var(--navy);font-weight:600}
-.live{display:flex;align-items:center;gap:6px;font-size:12px;color:#AFC3D6}
-.live i{width:8px;height:8px;border-radius:50%;background:#61C454;display:block;box-shadow:0 0 0 3px rgba(97,196,84,.25)}
-.live.off i{background:#F06A5F;box-shadow:0 0 0 3px rgba(240,106,95,.25)}
-main.v-customer{grid-template-columns:1fr}main.v-customer #paneBiz{display:none}
-main.v-business{grid-template-columns:1fr}main.v-business #paneCust{display:none}
-.api{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
-.api .ah{display:flex;gap:8px;align-items:center;padding:7px 10px;background:#F7F9FB;font-size:12.5px}
-.api .m{font-weight:700;color:var(--teal)}.api .code{margin-left:auto;font-weight:700}
-.api pre{margin:0;padding:8px 10px;font-size:11.5px;max-height:180px;overflow:auto;background:#0F1A2E;color:#D6E2F0;white-space:pre-wrap;word-break:break-word}
-main>section,.console,.tab{min-width:0}
-.pane-title .link{margin-left:auto;background:none;border:1px solid var(--line);border-radius:7px;padding:1px 8px;line-height:1.5;font-size:12px;color:var(--teal)}
-.pane-title .link:hover{border-color:var(--teal)}
+/* ---------- console ---------- */
+.console{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--lift);overflow:hidden}
+.c-head{display:flex;align-items:center;gap:10px;padding:14px 18px 0}
+.c-head b{font-family:var(--display);font-weight:650;font-size:17px;letter-spacing:-.015em}
+.nw{width:26px;height:26px;border-radius:7px;background:#0E3B5C;color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;letter-spacing:-.02em}
+.c-head .by{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-3);padding-left:10px;margin-left:2px;border-left:1px solid var(--line-2)}
+.c-head .who{margin-left:auto;font-size:12px;color:var(--ink-3);display:flex;gap:14px;align-items:center}
+.c-head .who strong{color:var(--ink-2);font-weight:600}
+.iconbtn{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ink-2)}
+.iconbtn:hover{background:var(--surface-2);color:var(--ink)}
+.tabs{position:relative;display:flex;gap:4px;padding:10px 12px 0;border-bottom:1px solid var(--line)}
+.tabs button{padding:9px 8px 11px;color:var(--ink-3);display:flex;gap:7px;align-items:center;transition:color .2s}
+.tabs button:hover{color:var(--ink)}
+.tabs button.on{color:var(--ink);font-weight:600}
+.tabs .bar{position:absolute;bottom:-1px;left:0;height:2px;background:var(--iris);border-radius:2px;transition:transform .38s var(--ease),width .38s var(--ease)}
+.count{min-width:18px;height:18px;border-radius:9px;background:var(--hold);color:#fff;font-size:11px;font-weight:700;display:none;place-items:center;padding:0 5px;font-variant-numeric:tabular-nums}
+.count.on{display:inline-grid;animation:pop .4s var(--spring)}
+@keyframes pop{from{transform:scale(.4)}}
+.tab{flex:1;overflow:auto;padding:16px 18px 24px;display:none}
+.tab.on{display:block}
+.blank{padding:56px 12px;text-align:center;color:var(--ink-3);max-width:380px;margin:0 auto}
+.blank b{display:block;color:var(--ink);font-size:15px;margin-bottom:6px}
+
+/* review card */
+.rcard{border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden;background:var(--surface)}
+.rcard.enter{animation:enter .55s var(--ease)}
+@keyframes enter{from{opacity:0;transform:translateY(10px)}}
+.rc-top{display:flex;gap:12px;align-items:center;padding:14px 16px}
+.rc-top h4{margin:0;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.rc-top small{display:block;color:var(--ink-3);font-size:12px;margin-top:1px}
+.clock{margin-left:auto;text-align:right;font-size:12px;color:var(--ink-3)}
+.clock b{display:block;font-size:16px;color:var(--hold);font-weight:650;font-variant-numeric:tabular-nums}
+.rc-sec{padding:12px 16px;border-top:1px solid var(--line)}
+.rc-sec h5{margin:0 0 8px;font-size:12px;font-weight:600;color:var(--ink-3)}
+.why{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:13px}
+.why+.why{margin-top:8px}
+.rid{font-size:11px;font-weight:700;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-variant-numeric:tabular-nums;margin-top:1px}
+.why small{display:block;color:var(--ink-3);font-size:12px;margin-top:3px}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;font-size:13px}
+.kv dt{color:var(--ink-3)} .kv dd{margin:0}
+.answer{border-radius:12px;padding:12px 14px;font-size:13px}
+.answer b{display:block;font-size:14px;margin-bottom:2px}
+.answer.wait{background:var(--surface-2);color:var(--ink-2);display:flex;gap:10px;align-items:flex-start}
+.answer.wait b{font-size:13px}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--hold);margin-top:6px;flex:none;animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+.answer.self{background:var(--ok-tint)} .answer.self b{color:var(--ok)}
+.answer.coached{background:var(--deny-tint)} .answer.coached b{color:var(--deny)}
+.answer .rec{margin-top:6px;color:var(--ink-2)}
+.told{font-size:13px;color:var(--ink-2)}
+.acts{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line);background:var(--surface-2)}
+.btn{border-radius:10px;padding:9px 14px;font-weight:600;font-size:13px;transition:transform .15s var(--ease),background .2s,opacity .2s;border:1px solid transparent}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.4;cursor:default;transform:none}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.primary:hover:not(:disabled){background:#2A2735}
+.btn.brand{background:var(--iris);color:#fff}
+.btn.brand:hover:not(:disabled){background:var(--iris-2)}
+.btn.quiet{background:var(--surface);border-color:var(--line-2);color:var(--ink)}
+.btn.quiet:hover{border-color:var(--ink-3)}
+.btn.danger{background:var(--surface);border-color:var(--line-2);color:var(--deny)}
+.btn.danger:hover{border-color:var(--deny)}
+.liab{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--ease)}
+.liab.open{grid-template-rows:1fr}
+.liab>div{overflow:hidden}
+.liab-in{margin:0 16px 14px;padding:16px;border-radius:12px;background:var(--ink);color:#EDEBF5}
+.liab-in h6{margin:0 0 6px;font-family:var(--display);font-size:17px;font-weight:650;letter-spacing:-.01em;color:#fff}
+.liab-in p{margin:0 0 8px;font-size:13px;color:#C9C6D6}
+.liab-in .warnline{color:#FFB4AB}
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:#fff;margin:12px 0 14px;cursor:pointer}
+.agree input{appearance:none;width:18px;height:18px;border-radius:5px;border:1.5px solid #8F8BA3;margin:1px 0 0;flex:none;display:grid;place-items:center;cursor:pointer;transition:background .2s,border-color .2s}
+.agree input:checked{background:#fff;border-color:#fff}
+.agree input:checked::after{content:"";width:9px;height:5px;border:2px solid var(--ink);border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.liab-in .row{display:flex;gap:8px;justify-content:flex-end}
+.liab-in .btn.quiet{background:transparent;color:#fff;border-color:#4A4659}
+.liab-in .btn.white{background:#fff;color:var(--ink)}
+
+/* decision rows */
+.drow{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;padding:14px 2px;border-bottom:1px solid var(--line)}
+.drow.enter{animation:enter .55s var(--ease)}
+.drow h4{margin:0;font-size:14px;font-weight:600}
+.drow .meta{color:var(--ink-3);font-size:12px;margin-top:1px}
+.drow .body{font-size:13px;color:var(--ink-2);margin-top:8px}
+.drow .body p{margin:4px 0}
+.drow .when{font-size:12px;color:var(--ink-3);text-align:right;white-space:nowrap}
+.st{font-weight:600}.st.ok{color:var(--ok)}.st.hold{color:var(--hold)}.st.deny{color:var(--deny)}
+.liabnote{display:inline-flex;gap:6px;align-items:center;font-size:12px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:4px 8px;margin-top:6px}
+
+/* rules */
+.intro{font-size:13px;color:var(--ink-2);margin:0 0 14px;max-width:62ch}
+.rule{padding:14px 0;border-bottom:1px solid var(--line)}
+.rule .rh{display:flex;gap:10px;align-items:center}
+.rule .rh b{font-size:14px}
+.rule .out{margin-left:auto;font-size:12px;font-weight:600}
+.out.DENY{color:var(--deny)}.out.HOLD{color:var(--hold)}.out.INHERIT{color:var(--iris)}
+.rule .cond{font-size:13px;color:var(--ink-2);margin-top:6px;max-width:66ch}
+.rule .src{font-size:12px;color:var(--ink-3);margin-top:4px}
+.edit{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--ink-2)}
+.edit input{width:86px;padding:6px 8px;border:1px solid var(--line-2);border-radius:8px;font:inherit;font-variant-numeric:tabular-nums}
+.proposal{border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:16px;animation:rise .35s var(--ease)}
+.proposal h5{margin:0;font-size:14px}
+.proposal .sub{font-size:13px;color:var(--ink-2);margin-top:4px}
+.bars{display:grid;grid-template-columns:80px 1fr 64px;gap:8px;align-items:center;margin:12px 0 8px;font-size:13px}
+.track{height:8px;border-radius:4px;background:var(--surface-2);overflow:hidden}
+.track i{display:block;height:100%;background:var(--iris);border-radius:4px;transition:width .6s var(--ease)}
+.track i.now{background:var(--ink-3)}
+
+/* audit */
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.toolbar span{font-size:12px;color:var(--ink-3);flex-basis:100%}
+.vres{border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px;animation:rise .35s var(--ease)}
+.vres.good{background:var(--ok-tint);color:var(--ok)}.vres.bad{background:var(--deny-tint);color:var(--deny)}
+.ae{display:grid;grid-template-columns:36px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.ae.broken{background:var(--deny-tint);border-radius:8px;padding:10px 8px}
+.ae .seq{color:var(--ink-3);font-variant-numeric:tabular-nums}
+.ae .ev{font-weight:600}
+.ae .who{color:var(--ink-3);font-size:12px}
+.ae .det{color:var(--ink-2);margin-top:2px}
+.ae .hash{color:var(--ink-3);margin-top:3px}
+
+/* api */
+.call{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.call .ch{display:flex;gap:10px;align-items:center;padding:8px 12px;font-size:13px;background:var(--surface-2)}
+.call .m{font-weight:700}
+.call .code{margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums}
+.call pre{margin:0;padding:10px 12px;font:12px/1.5 var(--mono);max-height:200px;overflow:auto;background:#17151F;color:#DCD9EA;white-space:pre-wrap;word-break:break-word}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,12px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;box-shadow:var(--float);opacity:0;transition:opacity .25s var(--ease),transform .35s var(--ease);pointer-events:none;z-index:30;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:1180px){main{grid-template-columns:minmax(0,1fr)}.m-body{grid-template-columns:1fr}.browser{min-height:720px}.console{min-height:640px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="brand">
-    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2l11 4v9c0 7-4.7 12.4-11 15C9.7 27.4 5 22 5 15V6z" fill="#1F7A8C"/><path d="M10.5 16.2l3.6 3.6 7.4-7.6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <div><h1>Countersign</h1><small>Two-way trust checks for digital-asset payments</small></div>
-  </div>
-  <div class="scen" id="scenBtns">
-    <button data-s="s1"><span class="n">1</span>Normal payment</button>
-    <button data-s="s2"><span class="n">2</span>Clone site</button>
-    <button data-s="s3"><span class="n">3</span>Held for review</button>
-    <button data-s="s4"><span class="n">4</span>Sanctioned wallet</button>
-  </div>
+<header class="top">
+  <div class="brand"><span id="markTop"></span><b>Countersign</b></div>
+  <nav class="seg" id="scenSeg" aria-label="Scenarios">
+    <span class="thumb"></span>
+    <button data-s="s1"><span class="k">1</span>Normal payment</button>
+    <button data-s="s2"><span class="k">2</span>Clone site</button>
+    <button data-s="s3"><span class="k">3</span>Held for review</button>
+    <button data-s="s4"><span class="k">4</span>Sanctioned wallet</button>
+  </nav>
   <div class="spacer"></div>
-  <div class="views" id="views">
-    <button data-v="split">Both</button><button data-v="customer">Customer</button><button data-v="business">Business</button>
-  </div>
-  <div class="live" id="live" title="Connection to the Countersign API"><i></i><span id="liveTxt">API live</span></div>
-  <button class="ghost" id="resetBtn" title="Clear everything in this room and start again">Reset</button>
+  <nav class="seg" id="viewSeg" aria-label="View">
+    <span class="thumb"></span>
+    <button data-v="split">Both</button><button data-v="shopper">Shopper</button><button data-v="business">Business</button>
+  </nav>
+  <button class="reset" id="resetBtn" title="Clear everything and start again (R)">Reset</button>
 </header>
 
 <main id="main">
-  <section class="pane" id="paneCust">
-    <div class="pane-title"><h2>Customer view</h2><span>Browser with the Countersign extension</span></div>
+  <section class="pane" id="paneShop">
+    <div class="pane-h"><h2>Shopper</h2><span>Shopping online with the Countersign browser extension</span></div>
     <div class="browser">
       <div class="chrome">
-        <div class="dots"><i></i><i></i><i></i></div>
-        <div class="url"><span class="lock">&#128274;</span><span id="urlText">Choose a scenario above to begin</span></div>
-        <button class="ext-btn" id="extBtn" title="Countersign extension">
-          <svg width="18" height="18" viewBox="0 0 32 32"><path d="M16 2l11 4v9c0 7-4.7 12.4-11 15C9.7 27.4 5 22 5 15V6z" fill="#1F7A8C"/></svg>
-          <span class="badge" id="extBadge"></span>
-        </button>
+        <div class="lights"><i></i><i></i><i></i></div>
+        <div class="navs" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="url"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="5.5" width="8" height="5.5" rx="1.5" fill="none" stroke="#7D7B8A" stroke-width="1.2"/><path d="M4 5.5V4a2 2 0 014 0v1.5" fill="none" stroke="#7D7B8A" stroke-width="1.2"/></svg><span id="urlText">New tab</span></div>
+        <button class="extbtn" id="extBtn" title="Countersign extension" aria-label="Countersign extension"><span id="markExt"></span><span class="dot" id="extDot"></span></button>
       </div>
       <div class="page" id="page"></div>
-      <div class="ext" id="ext"></div>
+      <div class="ext" id="ext" role="dialog" aria-label="Countersign check"></div>
     </div>
   </section>
 
   <section class="pane" id="paneBiz">
-    <div class="pane-title"><h2>Business view</h2><span>Payment provider's compliance console</span><button class="link" id="copyLink" title="Copy a link that opens the business console in this room on another device">Copy reviewer link</button></div>
+    <div class="pane-h"><h2>Business</h2><span>Northwind Pay, the payment processor, runs its compliance on the Countersign console</span></div>
     <div class="console">
       <div class="c-head">
-        <svg width="18" height="18" viewBox="0 0 32 32"><path d="M16 2l11 4v9c0 7-4.7 12.4-11 15C9.7 27.4 5 22 5 15V6z" fill="#14213D"/></svg>
-        <b>Northwind Pay</b><span class="muted">· Countersign console</span>
-        <span class="who">Reviewer: A. Patel · Ruleset <b id="rsVer">v1.3</b></span>
+        <span class="nw" aria-hidden="true">N</span><b>Northwind Pay</b><span class="by"><span id="markConsole"></span>Countersign console</span>
+        <div class="who"><span>Reviewing as <strong id="reviewer">A. Patel</strong></span><span>Ruleset <strong id="rsVer">v1.4</strong></span>
+          <button class="iconbtn" id="copyLink" title="Copy a link that opens this console on another device" aria-label="Copy reviewer link"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M6.5 9.5l3-3M7 4.5l1.2-1.2a2.8 2.8 0 014 4L11 8.5M9 11.5l-1.2 1.2a2.8 2.8 0 01-4-4L5 7.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button></div>
       </div>
       <div class="tabs" id="tabs">
-        <button data-t="queue" class="active">Review queue <span class="cnt" id="qCnt">0</span></button>
+        <button data-t="queue" class="on">Review <span class="count" id="qCnt">0</span></button>
         <button data-t="decisions">Decisions</button>
         <button data-t="rules">Rules</button>
         <button data-t="audit">Audit log</button>
         <button data-t="api">API</button>
+        <span class="bar" id="tabBar"></span>
       </div>
-      <div class="tab active" id="tab-queue"></div>
+      <div class="tab on" id="tab-queue"></div>
       <div class="tab" id="tab-decisions"></div>
       <div class="tab" id="tab-rules"></div>
       <div class="tab" id="tab-audit"></div>
@@ -238,35 +372,64 @@ main>section,.console,.tab{min-width:0}
   </section>
 </main>
 
-<footer>
-  <span>Prototype · all data synthetic</span>
-  <span>Backend: Python Flask API (decision engine, escrow, rules, SHA-256 audit chain)</span>
-  <span>FCA Register and Warning List: cached snapshot · Sanctions: synthetic sample</span>
-  <span>Room: <b id="roomName"></b></span>
-</footer>
-
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status"></div>
 
 <script>
 {
 /* ---------- setup ---------- */
 const qs = new URLSearchParams(location.search);
 const ROOM = (qs.get('room') || 'demo').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 40) || 'demo';
-let VIEW = ['split', 'customer', 'business'].includes(qs.get('view')) ? qs.get('view') : 'split';
+let VIEW = { split: 'split', customer: 'shopper', shopper: 'shopper', business: 'business' }[qs.get('view')] || 'split';
 const $ = id => document.getElementById(id);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const short = w => w.slice(0, 6) + '…' + w.slice(-4);
-const gbp = n => '£' + Number(n).toLocaleString('en-GB');
+const short = w => String(w).startsWith('0x') ? w.slice(0, 6) + '…' + w.slice(-4) : w;
+const money = n => '£' + Number(n).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const SHIELD = '<svg width="20" height="20" viewBox="0 0 32 32"><path d="M16 2l11 4v9c0 7-4.7 12.4-11 15C9.7 27.4 5 22 5 15V6z" fill="#1F7A8C"/><path d="M10.5 16.2l3.6 3.6 7.4-7.6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const ICON = { pass: '&#10003;', fail: '&#10005;', warn: '!', na: '–' };
+const ago = ts => { const s = Math.max(0, Math.round((Date.now() - new Date(ts)) / 1000)); return s < 60 ? `${s}s ago` : `${Math.floor(s / 60)} min ago`; };
+const time = ts => new Date(ts).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+const MARK = (size = 22, a = '#4F2FE6', b = '#17151F') => `<svg width="${size}" height="${Math.round(size * .62)}" viewBox="0 0 48 30" aria-hidden="true"><path d="M3 15l8 8L27 5" fill="none" stroke="${a}" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 15l8 8L45 3" fill="none" stroke="${b}" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const GLYPH = {
+  ok: '<path class="glyph" d="M17 31l5 5 10-12M25 31l5 5 11-13" />',
+  deny: '<path class="glyph" d="M23 23l14 14M37 23L23 37" />',
+  hold: '<path class="glyph" d="M30 21v10l6 4" />',
+  neutral: '<path class="glyph" d="M22 30h16" />'
+};
+const SPIN = '<svg class="spin" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-opacity=".22" stroke-width="1.6"/><path d="M7 1.5a5.5 5.5 0 015.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const COLOR = { ok: 'var(--ok)', deny: 'var(--deny)', hold: 'var(--hold)', neutral: 'var(--ink-2)' };
+const seal = (kind, size = 44, still = false) => `<svg class="seal${still ? ' still' : ''}" width="${size}" height="${size}" viewBox="0 0 60 60" aria-hidden="true" style="color:${COLOR[kind]}"><circle class="ring" cx="30" cy="30" r="26" fill="none" stroke="currentColor" stroke-width="3.5"/><g fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">${GLYPH[kind]}</g></svg>`;
+const ICON = {
+  pass: '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 6.2l2.3 2.3L9.5 3.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  fail: '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 3l6 6M9 3L3 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  warn: '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 2.5v4.2M6 9.2v.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
+  na: '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 6h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  inherit: '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 4.5L6 2l4 2.5M3 5.5v3.5M6 5.5v3.5M9 5.5v3.5M2 10h8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+const WICON = {
+  bank: '<svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 6l6-3.5L14 6M3.5 7v5M6.5 7v5M9.5 7v5M12.5 7v5M2 13.5h12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  exchange: '<svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 5.5h9l-2.5-2.5M13 10.5H4l2.5 2.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  self: '<svg width="16" height="16" viewBox="0 0 16 16"><circle cx="5.5" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8.5 8H14M12 8v2.5M14 8v2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
+  card: '<svg width="18" height="18" viewBox="0 0 18 18"><rect x="2" y="4" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M2 7.5h14" stroke="currentColor" stroke-width="1.3"/></svg>',
+  pound: '<svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M11.5 6.2a2.2 2.2 0 00-4 1.3V12M6 9.3h4M6 12h5.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  crypto: '<svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 2l5.5 3.2v6.6L9 15l-5.5-3.2V5.2z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M9 2v13M3.5 5.2L9 8.4l5.5-3.2" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" opacity=".6"/></svg>',
+  lock: '<svg width="16" height="16" viewBox="0 0 16 16"><rect x="3" y="7" width="10" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>'
+};
+const ART = {
+  coffee: c => `<svg width="120" height="120" viewBox="0 0 120 120"><path d="M38 34h44l6 70H32z" fill="${c}"/><path d="M38 34l6-12h32l6 12" fill="${c}" opacity=".75"/><circle cx="60" cy="66" r="14" fill="#fff" opacity=".9"/><path d="M55 66c3-6 7-6 10 0-3 6-7 6-10 0z" fill="${c}"/></svg>`,
+  bowl: c => `<svg width="140" height="110" viewBox="0 0 140 110"><ellipse cx="70" cy="78" rx="54" ry="12" fill="${c}" opacity=".35"/><ellipse cx="70" cy="70" rx="50" ry="11" fill="${c}" opacity=".6"/><path d="M34 42h72c0 20-16 32-36 32S34 62 34 42z" fill="${c}"/><ellipse cx="70" cy="42" rx="36" ry="8" fill="#fff" opacity=".55"/></svg>`,
+  laptop: c => `<svg width="160" height="110" viewBox="0 0 160 110"><rect x="32" y="16" width="96" height="64" rx="6" fill="${c}"/><rect x="38" y="22" width="84" height="52" rx="3" fill="#fff" opacity=".12"/><path d="M18 86h124l-8 10H26z" fill="${c}" opacity=".8"/></svg>`,
+  headphones: c => `<svg width="130" height="120" viewBox="0 0 130 120"><path d="M30 72V60a35 35 0 0170 0v12" fill="none" stroke="${c}" stroke-width="8" stroke-linecap="round"/><rect x="20" y="62" width="22" height="38" rx="10" fill="${c}"/><rect x="88" y="62" width="22" height="38" rx="10" fill="${c}"/></svg>`,
+  bond: c => `<svg width="150" height="110" viewBox="0 0 150 110"><rect x="22" y="14" width="106" height="80" rx="4" fill="#fff"/><rect x="22" y="14" width="106" height="80" rx="4" fill="none" stroke="${c}" stroke-width="3"/><path d="M38 34h60M38 46h74M38 58h50" stroke="${c}" stroke-width="3" stroke-linecap="round" opacity=".6"/><circle cx="106" cy="74" r="12" fill="${c}"/></svg>`
+};
+const EVENT = { LEDGER_INIT: 'Ledger started', PAYMENT_INITIATED: 'Payment started', DECISION: 'Decision', ESCROW_LOCKED: 'Funds locked in escrow',
+  CUSTOMER_RESPONSE: 'Customer answered', REVIEW_DECISION: 'Reviewed', LIABILITY_ACCEPTED: 'Liability accepted', ESCROW_RELEASED: 'Escrow released',
+  ESCROW_REFUNDED: 'Escrow refunded', RULE_CHANGE_PROPOSED: 'Rule change proposed', RULE_CHANGE_APPROVED: 'Rule change approved', RULE_CHANGE_DISCARDED: 'Rule change discarded' };
+const KIND = { APPROVE: 'ok', HOLD: 'hold', DENY: 'deny' };
 
 let SC = {}, B = null, lastRev = -1, cur = null, animating = false, verifyRes = null;
-const calls = [];
+const calls = [], seen = new Set(), liab = {}, liabOk = {};
 
-/* ---------- API client ---------- */
-/* ---------- built-in engine (used when the page is opened without the Flask server) ----------
-   Mirrors app.py so the demo still works from a file or with no network. */
+/* ---------- built in engine, used when the page is opened without the Flask server. Mirrors app.py ---------- */
 const LOCAL = (() => {
   const SHA = (() => {
     const primes = n => { const p = []; for (let i = 2; p.length < n; i++) if (p.every(q => i % q)) p.push(i); return p; };
@@ -292,177 +455,165 @@ const LOCAL = (() => {
       return H.map(x => x.toString(16).padStart(8, '0')).join('');
     };
   })();
-
+  const REVIEWER = 'A. Patel', SECOND = 'J. Okafor';
   const DATA = {
     fca_register: [{ frn: '812345', name: 'Harbour & Finch Investments Ltd', status: 'Authorised', domain: 'harbourfinch.co.uk', wallet: '0x4f1c9a07b2e5d6c3a8f0e1b2c3d4e5f6a7b888d2', phone: '020 7946 0321' }],
     warning_list: [{ domain: 'harbour-finch-invest.com', note: 'Clone of FCA authorised firm (FRN 812345)', added: '14 Nov 2026' }],
     sanctions: [{ wallet: '0x8e21d4c0aa13f9b7e65c2d90f1a3b4c5d6e7f0a9', ref: 'SDN-SYN-0042', list: 'OFAC SDN (synthetic sample)' }],
     credentials: {
       '0x9b2e77f1c0d3a4b5e6f708192a3b4c5d6e7fc41a': { issuer: 'Northwind Pay', status: 'valid', expires: '30 Jun 2027' },
+      '0x6d4a19c2b8e7f0a1d3c5e7f9a2b4c6d8e0f1a3c7': { issuer: 'Northwind Pay', status: 'valid', expires: '31 Jan 2027' },
       '0x2ac5b9e8f7d6c5b4a3928170f6e5d4c3b2a17e3b': { issuer: 'Northwind Pay', status: 'valid', expires: '31 Mar 2027' }
     }
   };
-  const ATLAS = { name: 'Atlas Electronics', domain: 'atlas-electronics.co.uk', path: '/checkout', wallet: '0x2ac5b9e8f7d6c5b4a3928170f6e5d4c3b2a17e3b', claims_frn: null, color: '#1D2B53', accent: '#3E6CE0' };
-  const MARGARET = { name: "Margaret's wallet", wallet: '0x51d0a3b2c4e5f60718293a4b5c6d7e8f9a0b11e9', age_days: 420 };
+  const LUMEN = { name: 'Lumen Coffee Roasters', domain: 'lumencoffee.co.uk', path: '/checkout', wallet: '0x9b2e77f1c0d3a4b5e6f708192a3b4c5d6e7fc41a', claims_frn: null, color: '#3B2418', accent: '#A8602F' };
+  const KILN = { name: 'Kiln Homeware', domain: 'kilnhomeware.co.uk', path: '/checkout', wallet: '0x6d4a19c2b8e7f0a1d3c5e7f9a2b4c6d8e0f1a3c7', claims_frn: null, color: '#2F3A2E', accent: '#5E7552' };
+  const ATLAS = { name: 'Atlas Electronics', domain: 'atlas-electronics.co.uk', path: '/checkout', wallet: '0x2ac5b9e8f7d6c5b4a3928170f6e5d4c3b2a17e3b', claims_frn: null, color: '#111318', accent: '#2E3440' };
+  const CLONE = { name: 'Harbour & Finch Investments', domain: 'harbour-finch-invest.com', path: '/deposit', wallet: '0x13ab7c6d5e4f30214a5b6c7d8e9f0a1b2c3dff02', claims_frn: '812345', phone: '0161 555 0199', color: '#0B3D2E', accent: '#1E7A57', financial: true };
+  const KESTREL = { name: 'Kestrel Exchange', provider: 'Connected exchange account', type: 'exchange', network: 'Ethereum', wallet: '0x51d0a3b2c4e5f60718293a4b5c6d7e8f9a0b11e9', age_days: 420 };
   const SCENARIOS = {
-    s1: { label: 'Normal payment', merchant: { name: 'Lumen Coffee Roasters', domain: 'lumencoffee.co.uk', path: '/checkout', wallet: '0x9b2e77f1c0d3a4b5e6f708192a3b4c5d6e7fc41a', claims_frn: null, color: '#6B3E26', accent: '#B9733F' },
-          item: { title: 'Ethiopia Guji – whole bean, 3 × 250g', desc: 'Washed process. Notes of jasmine, peach and bergamot. Roasted this week in Bristol.', emoji: '&#9749;', price: 45 }, payer: { ...MARGARET, balance: 3820 } },
-    s2: { label: 'Clone site', merchant: { name: 'Harbour & Finch Investments', domain: 'harbour-finch-invest.com', path: '/deposit', wallet: '0x13ab7c6d5e4f30214a5b6c7d8e9f0a1b2c3dff02', claims_frn: '812345', phone: '0161 555 0199', color: '#0B3D2E', accent: '#1E9E6E', financial: true },
-          item: { title: 'Fixed-yield bond – 12% p.a. guaranteed', desc: 'Limited allocation closes tonight. Deposit in GBPx stablecoin to secure your place.', emoji: '&#128200;', price: 5000 }, payer: { ...MARGARET, balance: 6200 } },
-    s3: { label: 'Held for review', merchant: { ...ATLAS },
-          item: { title: 'UltraBook Pro 14 – 32GB / 1TB', desc: '14" OLED, 22-hour battery. Free next-day delivery.', emoji: '&#128187;', price: 2400 },
-          payer: { name: "Daniel's new wallet", wallet: '0x7f3e2d1c0b9a8f7e6d5c4b3a29180f7e6d5c90b4', age_days: 2, balance: 2650 } },
-    s4: { label: 'Sanctioned wallet', merchant: { ...ATLAS },
-          item: { title: 'Noise-cancelling headphones X5', desc: 'Adaptive ANC, 40-hour battery.', emoji: '&#127911;', price: 320 },
-          payer: { name: 'Wallet', wallet: '0x8e21d4c0aa13f9b7e65c2d90f1a3b4c5d6e7f0a9', age_days: 160, balance: 900 } }
+    s1: { label: 'Normal payment', rail: 'stablecoin', asset: 'GBPx', group: 'Crypto', merchant: { ...KILN },
+      item: { title: 'Stoneware dinner set', variant: '12 pieces, oat glaze', art: 'bowl', desc: 'Thrown in Stoke on Trent. Dishwasher safe.', price: 180 },
+      payer: { ...KESTREL, balance: 1240 } },
+    s2: { label: 'Clone site', rail: 'stablecoin', asset: 'GBPx', group: 'Crypto', merchant: { ...CLONE },
+      item: { title: 'Fixed yield bond', variant: '12% a year, guaranteed', art: 'bond', desc: 'Limited allocation closes tonight. Deposit in GBPx to secure your place.', price: 5000 },
+      payer: { ...KESTREL, balance: 6200 } },
+    s3: { label: 'Held for review', rail: 'stablecoin', asset: 'GBPx', group: 'Crypto', merchant: { ...ATLAS },
+      item: { title: 'UltraBook Pro 14', variant: '32GB, 1TB, Graphite', art: 'laptop', desc: '14 inch OLED, 22 hour battery. Free next day delivery.', price: 2400 },
+      payer: { name: 'Self custody wallet', provider: 'Browser wallet', type: 'self', network: 'Ethereum', wallet: '0x7f3e2d1c0b9a8f7e6d5c4b3a29180f7e6d5c90b4', age_days: 2, balance: 2650 } },
+    s4: { label: 'Sanctioned wallet', rail: 'stablecoin', asset: 'GBPx', group: 'Crypto', merchant: { ...ATLAS },
+      item: { title: 'Studio headphones X5', variant: 'Adaptive noise cancelling', art: 'headphones', desc: '40 hour battery. Folds flat.', price: 320 },
+      payer: { name: 'Self custody wallet', provider: 'Browser wallet', type: 'self', network: 'Ethereum', wallet: '0x8e21d4c0aa13f9b7e65c2d90f1a3b4c5d6e7f0a9', age_days: 160, balance: 900 } }
   };
   const HISTORY = [['TX-0981',1850,3],['TX-0982',38,600],['TX-0983',650,1],['TX-0984',1200,45],['TX-0985',780,5],['TX-0986',96,220],
     ['TX-0987',2300,12],['TX-0988',940,4],['TX-0989',540,2],['TX-0990',22,30],['TX-0991',1499,6],['TX-0992',860,9],
     ['TX-0993',310,1],['TX-0994',2100,300],['TX-0995',700,3],['TX-0996',1100,8]].map(([id, amount, age_days]) => ({ id, amount, age_days }));
-
-  const short = w => w.slice(0, 6) + '…' + w.slice(-4);
   const gbp = n => '£' + Number(n).toLocaleString('en-GB');
   const rsVer = st => `v${st.ruleset[0]}.${st.ruleset[1]}`;
   const hashOf = e => SHA(JSON.stringify([e.seq, e.ts, e.event, e.actor, e.detail, e.ruleset, e.prev]));
-
   function audit(st, event, actor, detail) {
     const prev = st.audit.length ? st.audit[st.audit.length - 1].hash : '0'.repeat(64);
     const e = { seq: st.audit.length + 1, ts: new Date().toISOString(), event, actor, detail, ruleset: rsVer(st), prev };
     e.hash = hashOf(e); st.audit.push(e); st.rev++;
   }
-  function verify(st) {
-    let prev = '0'.repeat(64);
-    for (const e of st.audit) { if (e.prev !== prev || hashOf(e) !== e.hash) return e.seq; prev = e.hash; }
-    return null;
-  }
+  function verify(st) { let prev = '0'.repeat(64); for (const e of st.audit) { if (e.prev !== prev || hashOf(e) !== e.hash) return e.seq; prev = e.hash; } return null; }
   function fresh() {
-    const st = { ruleset: [1, 3], params: { amount: 1000, age_days: 7 }, pending: null, tx_seq: 1041, decisions: [], queue: [], audit: [], rev: 0 };
+    const st = { ruleset: [1, 4], params: { amount: 1000, age_days: 7 }, pending: null, tx_seq: 1041, decisions: [], queue: [], audit: [], rev: 0 };
     audit(st, 'LEDGER_INIT', 'system', `Ruleset ${rsVer(st)} loaded · FCA Register and Warning List snapshot cached · sanctions list (synthetic sample) loaded`);
     return st;
   }
   let st = fresh();
-
   const rules = () => [
-    { id: 'R1', name: 'Regulated-firm impersonation', outcome: 'DENY', cond: 'Payee claims to be an FCA-authorised firm but its domain or wallet does not match the FCA Register, or the domain is on the FCA Warning List', src: 'FCA Financial Services Register API · FCA Warning List' },
-    { id: 'R2', name: 'Sanctions screening', outcome: 'DENY', cond: 'Payer or payee wallet matches a sanctions list entry. Consumer sees a neutral message only (tipping-off risk).', src: 'OFAC SDN digital currency addresses · UK Sanctions List · Chainalysis free sanctions API' },
-    { id: 'R3', name: 'Merchant credential', outcome: 'HOLD', cond: 'Payee wallet has no valid verified-merchant credential', src: 'Countersign credential registry (issued after KYB by the payment provider)' },
-    { id: 'R4', name: 'New wallet, high value', outcome: 'HOLD', editable: true, cond: `Payer wallet younger than ${st.params.age_days} days AND amount over £${st.params.amount.toLocaleString('en-GB')}`, src: 'Internal risk policy · supports PSR APP-scam reimbursement and FCA Consumer Duty' },
-    { id: 'R5', name: 'Stablecoin holding limit', outcome: 'PARTIAL', cond: 'Incoming payment would take an individual over £20,000 in a systemic stablecoin: accept up to the limit and sweep the rest to the linked bank account. (Applies to incoming payments, so not triggered in these scenarios.)', src: 'Bank of England proposed regime for systemic stablecoins' }
+    { id: 'R1', name: 'Regulated firm impersonation', outcome: 'DENY', cond: 'Payee claims to be an FCA authorised firm but its domain or wallet does not match the FCA Register, or the domain is on the FCA Warning List.', src: 'FCA Financial Services Register API · FCA Warning List' },
+    { id: 'R2', name: 'Sanctions screening', outcome: 'DENY', cond: 'Payer or payee wallet matches a sanctions list entry. The shopper only sees a neutral message, to avoid tipping off.', src: 'OFAC SDN digital currency addresses · UK Sanctions List · Chainalysis free sanctions API' },
+    { id: 'R3', name: 'Merchant credential', outcome: 'HOLD', cond: 'Payee wallet has no valid verified merchant credential.', src: 'Countersign credential registry, issued by Northwind Pay after business checks (KYB)' },
+    { id: 'R4', name: 'New wallet, high value', outcome: 'HOLD', editable: true, cond: `Payer wallet younger than ${st.params.age_days} days and amount over £${st.params.amount.toLocaleString('en-GB')}.`, src: 'Internal risk policy · supports PSR APP scam reimbursement and FCA Consumer Duty' }
   ];
-
   function evaluate(tx) {
-    const m = tx.merchant, p = tx.payer, amount = tx.amount, checks = [];
+    const m = tx.merchant, p = tx.payer, amount = tx.amount, checks = [], bank = tx.rail === 'cbdc';
     let fired = [];
     const cred = DATA.credentials[m.wallet];
-    if (cred && cred.status === 'valid') checks.push({ t: 'Merchant credential', s: 'pass', d: `Verified merchant · issued by ${cred.issuer} after business checks · valid to ${cred.expires}` });
-    else {
-      checks.push({ t: 'Merchant credential', s: 'fail', d: 'No verified merchant credential for this wallet' });
-      fired.push({ id: 'R3', outcome: 'HOLD', internal: `Payee wallet ${short(m.wallet)} has no credential in the registry.`, business: 'Payee is not a verified merchant.', consumer: "This seller hasn't been verified." });
-    }
+    if (cred && cred.status === 'valid') checks.push({ t: 'Merchant credential', s: 'pass', d: `Verified by ${cred.issuer} after business checks, valid to ${cred.expires}` });
+    else { checks.push({ t: 'Merchant credential', s: 'fail', d: 'No verified merchant credential for this wallet' });
+      fired.push({ id: 'R3', outcome: 'HOLD', internal: `Payee wallet ${short(m.wallet)} has no credential in the registry.`, business: 'Payee is not a verified merchant.', consumer: "This seller hasn't been verified." }); }
     const r1 = [];
     if (m.claims_frn) {
       const f = DATA.fca_register.find(x => x.frn === m.claims_frn);
-      if (f && f.domain === m.domain && f.wallet === m.wallet) checks.push({ t: 'FCA Register', s: 'pass', d: `${f.name} · FRN ${f.frn} · ${f.status}` });
-      else {
-        checks.push({ t: 'FCA Register', s: 'fail', d: `Claims to be ${f.name} (FRN ${f.frn}), but the web address and wallet don't match the FCA record` });
-        r1.push(`Claims FRN ${f.frn} (${f.name}). Register domain ${f.domain} ≠ ${m.domain}; register wallet ${short(f.wallet)} ≠ payee ${short(m.wallet)}; register phone ${f.phone} ≠ site phone ${m.phone}.`);
-      }
-    } else checks.push({ t: 'FCA Register', s: 'na', d: 'Not offering regulated financial services, so not required' });
+      if (f && f.domain === m.domain && f.wallet === m.wallet) checks.push({ t: 'FCA Register', s: 'pass', d: `${f.name}, FRN ${f.frn}, ${f.status}` });
+      else { checks.push({ t: 'FCA Register', s: 'fail', d: `Claims to be ${f.name} (FRN ${f.frn}), but the web address and wallet don't match the FCA record` });
+        r1.push(`Claims FRN ${f.frn} (${f.name}). Register domain ${f.domain} ≠ ${m.domain}; register wallet ${short(f.wallet)} ≠ payee ${short(m.wallet)}; register phone ${f.phone} ≠ site phone ${m.phone}.`); }
+    } else checks.push({ t: 'FCA Register', s: 'na', d: 'Not offering regulated financial services, so not needed' });
     const warn = DATA.warning_list.find(w => w.domain === m.domain);
-    if (warn) { checks.push({ t: 'FCA Warning List', s: 'fail', d: `Listed ${warn.added}: ${warn.note}` }); r1.push(`Domain on FCA Warning List since ${warn.added} (${warn.note}).`); }
+    if (warn) { checks.push({ t: 'FCA Warning List', s: 'fail', d: `Listed ${warn.added}. ${warn.note}` }); r1.push(`Domain on FCA Warning List since ${warn.added} (${warn.note}).`); }
     else checks.push({ t: 'FCA Warning List', s: 'pass', d: 'Not listed' });
-    if (r1.length) fired.push({ id: 'R1', outcome: 'DENY', internal: r1.join(' '), business: 'Payee is impersonating an FCA-authorised firm (clone listed on the FCA Warning List).',
+    if (r1.length) fired.push({ id: 'R1', outcome: 'DENY', internal: r1.join(' '), business: 'Payee is impersonating an FCA authorised firm. The clone is on the FCA Warning List.',
       consumer: `This site is copying ${DATA.fca_register[0].name}, a firm authorised by the FCA. Its web address and wallet don't match the FCA record, and the FCA has warned about it.` });
-    const hit = DATA.sanctions.find(s => s.wallet === p.wallet || s.wallet === m.wallet);
-    if (hit) {
-      checks.push({ t: 'Sanctions screening', s: 'fail', d: 'Screening did not clear' });
-      fired.push({ id: 'R2', outcome: 'DENY', sensitive: true, internal: `Payer wallet ${short(p.wallet)} matches ${hit.list} entry ${hit.ref}.`,
-        business: 'Payer wallet matches a sanctions list. Do not disclose the reason to the customer (tipping-off risk). Escalate to MLRO per policy.',
-        consumer: "We can't complete this payment. Please contact your wallet provider." });
-    } else checks.push({ t: 'Sanctions screening', s: 'pass', d: 'Payer and payee wallets clear' });
+    const hit = bank ? DATA.sanctions.find(s => s.wallet === m.wallet) : DATA.sanctions.find(s => s.wallet === p.wallet || s.wallet === m.wallet);
+    if (hit) { checks.push({ t: 'Sanctions screening', s: 'fail', d: 'Screening did not clear' });
+      fired.push({ id: 'R2', outcome: 'DENY', sensitive: true, internal: `Wallet ${short(hit.wallet)} matches ${hit.list} entry ${hit.ref}.`,
+        business: 'Payer wallet matches a sanctions list. Do not tell the customer why (tipping off risk). Escalate to the MLRO.', consumer: "We can't complete this payment. Please contact your wallet provider." }); }
+    else if (bank) checks.push({ t: 'Sanctions screening', s: 'inherit', d: `Payer screened by ${p.provider}. Payee clear` });
+    else checks.push({ t: 'Sanctions screening', s: 'pass', d: 'Payer and payee wallets clear' });
     const prm = st.params;
-    if (p.age_days < prm.age_days && amount > prm.amount) {
-      checks.push({ t: 'Payer risk', s: 'warn', d: `New wallet (${p.age_days} days old) sending ${gbp(amount)}` });
+    if (bank) { checks.push({ t: 'Payer risk', s: 'inherit', d: `Identity and account history held by ${p.provider}` });
+      tx.inherited = { id: 'R5', outcome: 'INHERIT', internal: `Digital pound wallet at ${p.provider}. Payer KYC, sanctions and risk inherited.`, business: 'Payer checks covered by the issuing bank.', consumer: '' }; }
+    else if (p.age_days < prm.age_days && amount > prm.amount) {
+      checks.push({ t: 'Payer risk', s: 'warn', d: `Wallet is ${p.age_days} days old and sending ${gbp(amount)}` });
       fired.push({ id: 'R4', outcome: 'HOLD', internal: `Payer wallet age ${p.age_days} days (< ${prm.age_days}) and amount ${gbp(amount)} (> ${gbp(prm.amount)}).`,
-        business: 'First high-value payment from a brand-new wallet: a common pattern in account takeover and scam-coached payments.',
-        consumer: "This is a large payment from a new wallet, so we're taking a quick extra look to keep your money safe." });
-    } else checks.push({ t: 'Payer risk', s: 'pass', d: `Wallet age ${p.age_days} days · amount within normal pattern` });
+        business: 'First large payment from a brand new self custody wallet. This pattern is common in account takeover and in scams where someone coaches the victim to pay.',
+        consumer: "This is a large payment from a wallet that's only a few days old, so we're taking a quick extra look before it's sent." });
+    } else checks.push({ t: 'Payer risk', s: 'pass', d: `Wallet ${p.age_days} days old, amount within normal pattern` });
     let outcome = 'APPROVE';
     if (fired.some(f => f.outcome === 'DENY')) { outcome = 'DENY'; fired = fired.filter(f => f.outcome === 'DENY'); }
     else if (fired.some(f => f.outcome === 'HOLD')) outcome = 'HOLD';
     return { outcome, checks, fired, sensitive: fired.some(f => f.sensitive) };
   }
-
-  const consumerView = tx => ({ id: tx.id, amount: tx.amount, asset: tx.asset, merchant: tx.merchant.name, outcome: tx.result.outcome, status: tx.status,
-    reviewed: !!tx.reviewed, sensitive: tx.result.sensitive, checks: tx.result.checks, messages: tx.result.fired.map(f => f.consumer),
+  const consumerView = tx => ({ id: tx.id, amount: tx.amount, asset: tx.asset, rail: tx.rail, merchant: tx.merchant.name, outcome: tx.result.outcome, status: tx.status,
+    reviewed: !!tx.reviewed, sensitive: tx.result.sensitive, checks: tx.result.sensitive ? tx.result.checks.map(c => c.t === 'Sanctions screening' ? { t: 'Wallet checks', s: 'na', d: "Couldn't be completed" } : c) : tx.result.checks, messages: tx.result.fired.map(f => f.consumer),
     escrow: tx.escrow || null, feedback: tx.feedback || null, ruleset: tx.ruleset });
   const replay = prm => HISTORY.filter(h => h.age_days < prm.age_days && h.amount > prm.amount).map(h => h.id);
   function business() {
     let pend = null;
-    if (st.pending) {
-      const before = replay(st.params), after = replay(st.pending);
-      pend = { ...st.pending, before: before.length, after: after.length, total: HISTORY.length,
-        added: after.filter(i => !before.includes(i)), removed: before.filter(i => !after.includes(i)) };
-    }
-    return { rev: st.rev, ruleset: rsVer(st), params: st.params, rules: rules(), pending: pend,
+    if (st.pending) { const before = replay(st.params), after = replay(st.pending);
+      pend = { ...st.pending, before: before.length, after: after.length, total: HISTORY.length, added: after.filter(i => !before.includes(i)), removed: before.filter(i => !after.includes(i)) }; }
+    return { rev: st.rev, ruleset: rsVer(st), params: st.params, rules: rules(), pending: pend, provider: 'Northwind Pay', reviewer: REVIEWER,
       decisions: st.decisions.slice().reverse(), queue: st.queue, audit: st.audit.slice().reverse() };
   }
   const ok = data => ({ status: 200, data }), err = (status, error) => ({ status, data: { error } });
   const find = id => st.decisions.find(t => t.id === id);
-
   function handle(method, path, body) {
-    body = body || {};
-    let m;
+    body = body || {}; let m;
     if (method === 'GET' && path === '/api/scenarios') return ok(SCENARIOS);
     if (method === 'GET' && path === '/api/state') return ok(business());
     if (method === 'POST' && path === '/api/payments') {
       const sc = SCENARIOS[body.scenario]; if (!sc) return err(400, 'unknown scenario');
       const id = 'TX-' + (st.tx_seq++);
-      const tx = { id, merchant: sc.merchant, payer: sc.payer, amount: sc.item.price, asset: 'GBPx', ts: new Date().toISOString(), ruleset: rsVer(st) };
-      audit(st, 'PAYMENT_INITIATED', 'customer', `${id} · ${gbp(tx.amount)} GBPx · ${short(tx.payer.wallet)} → ${sc.merchant.name} (${short(sc.merchant.wallet)})`);
+      const tx = { id, merchant: sc.merchant, payer: sc.payer, amount: sc.item.price, asset: sc.asset, rail: sc.rail, ts: new Date().toISOString(), ruleset: rsVer(st) };
+      audit(st, 'PAYMENT_INITIATED', 'customer', `${id} · ${gbp(tx.amount)} ${tx.asset} · ${short(tx.payer.wallet)} → ${sc.merchant.name} (${short(sc.merchant.wallet)})`);
       const res = evaluate(tx); tx.result = res; tx.status = res.outcome; st.decisions.push(tx);
-      audit(st, 'DECISION', 'engine', `${id} · ${res.outcome} · rules fired: ${res.fired.map(f => f.id).join(', ') || 'none'} · ${res.fired.map(f => f.internal).join(' ') || 'All checks passed.'}`);
-      if (res.outcome === 'HOLD') {
-        tx.escrow = { addr: '0xe5c0' + SHA(id).slice(0, 34), state: 'Locked' }; st.queue.push(id);
-        audit(st, 'ESCROW_LOCKED', 'engine', `${id} · ${gbp(tx.amount)} GBPx locked in escrow ${short(tx.escrow.addr)}`);
-      }
+      const ids = res.fired.map(f => f.id).concat(tx.inherited ? ['R5'] : []);
+      audit(st, 'DECISION', 'engine', `${id} · ${res.outcome} · rules fired: ${ids.join(', ') || 'none'} · ${res.fired.map(f => f.internal).join(' ') || 'All checks passed.'}${tx.inherited ? ' ' + tx.inherited.internal : ''}`);
+      if (res.outcome === 'HOLD') { tx.escrow = { addr: '0xe5c0' + SHA(id).slice(0, 34), state: 'Locked' }; st.queue.push(id);
+        audit(st, 'ESCROW_LOCKED', 'engine', `${id} · ${gbp(tx.amount)} ${tx.asset} locked in escrow ${short(tx.escrow.addr)}`); }
       return { status: 201, data: consumerView(tx) };
     }
     if (method === 'GET' && (m = path.match(/^\/api\/payments\/([\w-]+)$/))) { const tx = find(m[1]); return tx ? ok(consumerView(tx)) : err(404, 'not found'); }
     if (method === 'POST' && (m = path.match(/^\/api\/payments\/([\w-]+)\/feedback$/))) {
       const tx = find(m[1]); if (!['self', 'coached'].includes(body.feedback)) return err(400, "feedback must be 'self' or 'coached'");
       if (!tx || tx.status !== 'HOLD') return err(409, 'payment is not on hold');
-      tx.feedback = body.feedback;
-      audit(st, 'CUSTOMER_FEEDBACK', 'customer', `${tx.id} · ` + (body.feedback === 'self' ? 'Customer confirms they initiated the payment' : 'Customer reports someone asked them to pay (possible coaching)'));
+      tx.feedback = body.feedback; tx.feedback_ts = new Date().toISOString();
+      audit(st, 'CUSTOMER_RESPONSE', 'customer', `${tx.id} · ` + (body.feedback === 'self' ? 'Customer says they are making this payment themselves' : 'Customer says someone asked them to make this payment (possible coaching)'));
       return ok(consumerView(tx));
     }
     if (method === 'POST' && (m = path.match(/^\/api\/payments\/([\w-]+)\/review$/))) {
       const tx = find(m[1]); if (!tx || tx.status !== 'HOLD') return err(409, 'payment is not on hold');
       const approve = !!body.approve;
+      if (approve && !body.accept_liability) return err(400, 'approving needs the reviewer to accept liability for the funds');
       tx.status = approve ? 'APPROVE' : 'DENY'; tx.reviewed = true; tx.escrow.state = approve ? 'Released to merchant' : 'Refunded to payer';
       st.queue = st.queue.filter(i => i !== tx.id);
-      audit(st, 'REVIEW_DECISION', 'reviewer: A. Patel', `${tx.id} · ${approve ? 'APPROVED' : 'DENIED'} after review${tx.feedback ? ' · customer feedback considered' : ''}`);
-      audit(st, approve ? 'ESCROW_RELEASED' : 'ESCROW_REFUNDED', 'engine', `${tx.id} · ${gbp(tx.amount)} GBPx ${approve ? 'released to ' + tx.merchant.name : 'returned to payer'}`);
+      const fb = { self: 'customer said they made it themselves', coached: 'customer said someone asked them to pay' };
+      audit(st, 'REVIEW_DECISION', 'reviewer: ' + REVIEWER, `${tx.id} · ${approve ? 'APPROVED' : 'DENIED'} after review · ${tx.feedback ? fb[tx.feedback] : 'no customer response'}`);
+      if (approve) { tx.liability = { by: REVIEWER, ts: new Date().toISOString() };
+        audit(st, 'LIABILITY_ACCEPTED', 'reviewer: ' + REVIEWER, `${tx.id} · ${gbp(tx.amount)} ${tx.asset} · the business accepts liability if these funds prove to be fraudulent${tx.feedback === 'coached' ? " · approved against the customer's coaching report" : ''}`); }
+      audit(st, approve ? 'ESCROW_RELEASED' : 'ESCROW_REFUNDED', 'engine', `${tx.id} · ${gbp(tx.amount)} ${tx.asset} ${approve ? 'released to ' + tx.merchant.name : 'returned to payer'}`);
       return ok(consumerView(tx));
     }
+    if (method === 'POST' && path === '/api/session/clear') { st.decisions = []; st.queue = []; st.rev++; return ok(business()); }
     if (method === 'POST' && path === '/api/rules/propose') {
       const amount = Math.max(0, parseInt(body.amount, 10)), age = Math.max(0, parseInt(body.age_days, 10));
       if (Number.isNaN(amount) || Number.isNaN(age)) return err(400, 'amount and age_days must be whole numbers');
       if (amount === st.params.amount && age === st.params.age_days) return err(400, 'no change');
-      st.pending = { amount, age_days: age, by: 'A. Patel' };
-      audit(st, 'RULE_CHANGE_PROPOSED', 'A. Patel', `R4: amount £${st.params.amount} → £${amount}; wallet age ${st.params.age_days} → ${age} days`);
+      st.pending = { amount, age_days: age, by: REVIEWER };
+      audit(st, 'RULE_CHANGE_PROPOSED', REVIEWER, `R4: amount £${st.params.amount} → £${amount}; wallet age ${st.params.age_days} → ${age} days`);
       return ok(business());
     }
     if (method === 'POST' && path === '/api/rules/approve') {
       if (!st.pending) return err(409, 'nothing pending');
       const old = { ...st.params }; st.params = { amount: st.pending.amount, age_days: st.pending.age_days }; st.pending = null; st.ruleset[1]++;
-      audit(st, 'RULE_CHANGE_APPROVED', 'J. Okafor (second approver)', `R4 now: amount over £${st.params.amount}, wallet younger than ${st.params.age_days} days (was £${old.amount}, ${old.age_days} days). Ruleset → ${rsVer(st)}`);
+      audit(st, 'RULE_CHANGE_APPROVED', `${SECOND} (second approver)`, `R4 now: amount over £${st.params.amount}, wallet younger than ${st.params.age_days} days (was £${old.amount}, ${old.age_days} days). Ruleset → ${rsVer(st)}`);
       return ok(business());
     }
-    if (method === 'POST' && path === '/api/rules/discard') {
-      if (st.pending) { st.pending = null; audit(st, 'RULE_CHANGE_DISCARDED', 'A. Patel', 'Pending R4 change discarded'); }
-      return ok(business());
-    }
+    if (method === 'POST' && path === '/api/rules/discard') { if (st.pending) { st.pending = null; audit(st, 'RULE_CHANGE_DISCARDED', REVIEWER, 'Pending R4 change discarded'); } return ok(business()); }
     if (method === 'GET' && path === '/api/audit/verify') return ok({ broken_at: verify(st), entries: st.audit.length });
     if (method === 'POST' && path === '/api/audit/tamper') {
       const t = st.audit.find(e => e.event === 'DECISION' && /DENY|HOLD/.test(e.detail)) || st.audit.find(e => e.event === 'DECISION') || st.audit[0];
@@ -478,246 +629,273 @@ let MODE = 'server';
 
 async function api(method, path, body, log = true) {
   let status, data;
-  if (MODE === 'local') {
-    ({ status, data } = LOCAL.handle(method, path, body));
-    data = JSON.parse(JSON.stringify(data));
-  } else {
+  if (MODE === 'local') { ({ status, data } = LOCAL.handle(method, path, body)); data = JSON.parse(JSON.stringify(data)); }
+  else {
     const url = path + (path.includes('?') ? '&' : '?') + 'room=' + encodeURIComponent(ROOM);
     const res = await fetch(url, { method, headers: body ? { 'Content-Type': 'application/json' } : {}, body: body ? JSON.stringify(body) : undefined });
     status = res.status; data = await res.json().catch(() => ({}));
   }
-  if (log) {
-    calls.unshift({ method, path, body, status, data, t: new Date() });
-    calls.length = Math.min(calls.length, 8);
-    renderApi();
-  }
+  if (log) { calls.unshift({ method, path, body, status, data, t: new Date() }); calls.length = Math.min(calls.length, 8); renderApi(); }
   if (status >= 400) throw Object.assign(new Error(data.error || 'Request failed'), { status });
   return data;
 }
 
-/* ---------- customer side ---------- */
-function emptyPage() {
-  $('page').innerHTML = `<div class="empty">
-    <svg width="56" height="56" viewBox="0 0 32 32"><path d="M16 2l11 4v9c0 7-4.7 12.4-11 15C9.7 27.4 5 22 5 15V6z" fill="#1F7A8C"/><path d="M10.5 16.2l3.6 3.6 7.4-7.6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <h3>Before a digital-asset payment settles, both sides are checked,<br>and both sides see the decision and the reason.</h3>
-    <div>Pick a scenario in the top bar. Keyboard shortcuts: 1–4, R to reset.</div></div>`;
-  $('urlText').textContent = 'Choose a scenario above to begin';
-  $('ext').style.display = 'none'; $('ext').innerHTML = ''; setBadge(null);
-  document.querySelectorAll('#scenBtns button').forEach(b => b.classList.remove('active'));
+/* ---------- segmented controls ---------- */
+function moveThumb(seg) {
+  const on = seg.querySelector('button.on'), th = seg.querySelector('.thumb');
+  if (!on) { th.style.width = '0px'; return; }
+  th.style.width = on.offsetWidth + 'px'; th.style.transform = `translateX(${on.offsetLeft}px)`;
+}
+function moveBar() {
+  const on = document.querySelector('#tabs button.on'), bar = $('tabBar');
+  bar.style.width = (on.offsetWidth - 16) + 'px'; bar.style.transform = `translateX(${on.offsetLeft + 8}px)`;
 }
 
-function loadScenario(key) {
-  const sc = SC[key]; if (!sc || animating) return;
-  if (VIEW === 'business') setView('split');
-  document.querySelectorAll('#scenBtns button').forEach(b => b.classList.toggle('active', b.dataset.s === key));
-  const m = sc.merchant, it = sc.item, p = sc.payer;
-  $('urlText').textContent = m.domain + m.path;
-  $('ext').style.display = 'none'; setBadge(null);
+/* ---------- shopper side ---------- */
+async function choose(key, keepView = false) {
+  if (!SC[key] || animating) return;
+  try { B = await api('POST', '/api/session/clear', null, false); lastRev = B.rev; } catch (e) { /* keep going */ }
+  Object.keys(liab).forEach(k => delete liab[k]); Object.keys(liabOk).forEach(k => delete liabOk[k]);
+  verifyRes = null; if (B) renderAll();
+  loadScenario(key, keepView);
+}
+
+function walletRows(sc) {
+  const p = sc.payer;
+  if (sc.rail === 'cbdc') return `<div class="wallets"><div class="wh"><span>Digital pound wallet</span><span>Bank held</span></div>
+    <div class="wallet on"><span class="ico">${WICON.bank}</span><span><b>${esc(p.provider)}</b><small class="mono">${esc(p.wallet)}</small></span><span class="bal num">${money(p.balance)}</span></div></div>`;
+  const ex = p.type === 'exchange' ? p : { name: 'Kestrel Exchange', provider: 'Connected exchange account', wallet: '0x51d0a3b2c4e5f60718293a4b5c6d7e8f9a0b11e9', balance: 1240 };
+  const se = p.type === 'self' ? p : { name: 'Browser wallet', provider: 'Self custody', wallet: '0x3c19b07e44d2a8f1c6e5b9d0a7f2e3c4b5a6d1f8', balance: 310 };
+  return `<div class="wallets"><div class="wh"><span>Connected wallets</span><span>GBPx on ${esc(p.network || 'Ethereum')}</span></div>
+    <div class="wallet${p.type === 'exchange' ? ' on' : ''}"><span class="ico">${WICON.exchange}</span><span><b>Kestrel Exchange</b><small>Exchange account <span class="mono">${short(ex.wallet)}</span></small></span><span class="bal num">${money(ex.balance)}</span></div>
+    <div class="wallet${p.type === 'self' ? ' on' : ''}"><span class="ico">${WICON.self}</span><span><b>Browser wallet</b><small>Self custody <span class="mono">${short(se.wallet)}</span></small></span><span class="bal num">${money(se.balance)}</span></div></div>`;
+}
+
+function loadScenario(key, keepView = false) {
+  const sc = SC[key], m = sc.merchant, it = sc.item, crypto = sc.rail !== 'cbdc';
+  document.querySelectorAll('#scenSeg button').forEach(b => b.classList.toggle('on', b.dataset.s === key)); moveThumb($('scenSeg'));
+  if (VIEW === 'business' && !keepView) setView('split');
+  $('urlText').innerHTML = `<span class="host">${esc(m.domain)}</span><span>${esc(m.path)}</span>`;
+  closeExt(); setDot(null);
   cur = { key, tx: null };
-  const hero = m.financial ? `
-    <div class="scamhero">
-      <div style="font-weight:800;font-size:18px">Harbour &amp; Finch <span style="font-weight:400">Investments</span></div>
-      <h3 style="margin-top:14px">Grow your savings 12% a year. Guaranteed.</h3>
-      <div>Trusted by 40,000 UK investors. Call our advisers on ${esc(m.phone)}.</div>
-      <div class="fca">&#10004; FCA authorised · FRN ${esc(m.claims_frn)}</div>
-      <div class="ticker"><span>&#9201; Offer closes in 02:14:09</span><span>&#128293; 37 people investing now</span></div>
-    </div>` : `
-    <div class="mhead" style="background:${esc(m.color)}"><div class="logo">${esc(m.name)}</div>
-      <div class="nav"><span>Shop</span><span>About</span><span>Basket (1)</span></div></div>`;
-  $('page').innerHTML = `${hero}
-    <div class="mbody">
-      <div>
-        <div class="product"><div class="pimg" style="background:${esc(m.accent)}22">${it.emoji}</div>
-          <div><h4>${esc(it.title)}</h4><p>${esc(it.desc)}</p></div></div>
-        <p class="muted" style="font-size:12.5px;margin-top:14px">Pay with GBPx stablecoin. Payments are checked by Countersign before they settle.</p>
+  const head = m.financial
+    ? `<div class="scam"><div class="logo">Harbour &amp; Finch Investments</div><h3>Grow your savings 12% a year. Guaranteed.</h3>
+        <p>Trusted by 40,000 UK investors. Call our advisers on ${esc(m.phone)}.</p>
+        <div class="badges"><span>FCA authorised, FRN ${esc(m.claims_frn)}</span><span>Offer closes in 02:14:09</span><span>37 people investing now</span></div></div>`
+    : `<div class="m-nav" style="background:${esc(m.color)}"><span class="logo">${esc(m.name)}</span><span class="links"><span>Shop</span><span>Journal</span><span>Basket (1)</span></span></div>`;
+  const method = (k, icon, title, sub) => `<div class="method${k ? ' on' : ''}"><span class="radio"></span><span>${icon}</span><span><b>${title}</b><small>${sub}</small></span></div>`;
+  $('page').innerHTML = `<div class="site">${head}
+    <div class="m-body">
+      <div class="prod">
+        <div class="art" style="background:${esc(m.accent)}1A">${ART[it.art](esc(m.accent))}</div>
+        <h4>${esc(it.title)}</h4><div class="variant">${esc(it.variant)}</div><p>${esc(it.desc)}</p>
       </div>
-      <div class="summary">
-        <div class="row"><span>${m.financial ? 'Deposit' : 'Subtotal'}</span><span>${gbp(it.price)}</span></div>
-        <div class="row"><span>${m.financial ? 'Fees' : 'Delivery'}</span><span>£0.00</span></div>
-        <div class="row total"><span>Total</span><span>${gbp(it.price)} GBPx</span></div>
-        <div class="payfrom">Paying from <b>${esc(p.name)}</b> <span class="mono">${short(p.wallet)}</span><br>Balance ${gbp(p.balance)} GBPx</div>
-        <button class="paybtn" id="payBtn" style="background:${esc(m.accent)}">Pay ${gbp(it.price)} with GBPx</button>
+      <div class="co">
+        <h5>${m.financial ? 'Your deposit' : 'Order summary'}</h5>
+        <div class="line"><span>${m.financial ? 'Deposit' : 'Subtotal'}</span><span class="num">${money(it.price)}</span></div>
+        <div class="line"><span>${m.financial ? 'Fees' : 'Delivery'}</span><span class="num">${money(0)}</span></div>
+        <div class="total"><span>Total</span><b class="num">${money(it.price)}</b></div>
+        <div class="methods">
+          ${method(false, WICON.card, 'Card', 'Visa ending 4421')}
+          ${method(!crypto, WICON.pound, 'Pay by bank', 'Instant bank transfer')}
+          ${method(crypto, WICON.crypto, 'Crypto', 'GBPx stablecoin from a wallet or exchange')}
+        </div>
+        ${walletRows(sc)}
+        <button class="paybtn" id="payBtn" style="background:${esc(m.financial ? m.accent : m.color)}">${crypto ? `Pay ${money(it.price)} in GBPx` : `Pay ${money(it.price)} with digital pound`}</button>
+        <div class="guard">${MARK(16)}<span>Checked by Countersign before it settles</span></div>
         <div class="mstatus" id="mstatus"></div>
       </div>
-    </div>`;
+    </div></div>`;
+  $('page').scrollTop = 0;
   $('payBtn').onclick = startPayment;
 }
 
-function setBadge(kind) {
-  const b = $('extBadge');
-  if (!kind) { b.style.display = 'none'; return; }
-  const map = { APPROVE: ['&#10003;', 'var(--ok)'], HOLD: ['!', 'var(--hold)'], DENY: ['&#10005;', 'var(--deny)'], NEUTRAL: ['&#10005;', '#6B7785'] };
-  b.innerHTML = map[kind][0]; b.style.background = map[kind][1]; b.style.display = 'flex';
+function setDot(kind) {
+  const d = $('extDot');
+  if (!kind) { d.classList.remove('on'); return; }
+  d.style.background = COLOR[kind]; d.classList.add('on');
 }
+function closeExt() { const e = $('ext'); e.classList.remove('open'); e.innerHTML = ''; }
 
 async function startPayment() {
   const sc = SC[cur.key], btn = $('payBtn');
-  btn.disabled = true; btn.textContent = 'Checking…'; animating = true;
+  btn.disabled = true; btn.classList.add('busy');
+  btn.innerHTML = `${SPIN}${sc.rail === 'cbdc' ? 'Confirming with your bank' : 'Waiting for your wallet'}`;
+  animating = true;
   let tx;
-  try { tx = await api('POST', '/api/payments', { scenario: cur.key }); }
-  catch (e) { animating = false; btn.disabled = false; btn.textContent = 'Try again'; toast('Could not reach the API: ' + e.message); return; }
+  try { await sleep(500); tx = await api('POST', '/api/payments', { scenario: cur.key }); }
+  catch (e) { animating = false; btn.disabled = false; btn.classList.remove('busy'); btn.textContent = 'Try again'; toast('Couldn’t reach Countersign. ' + e.message); return; }
   cur.tx = tx;
   const ext = $('ext');
-  ext.style.display = 'block';
-  ext.innerHTML = `<div class="ext-h">${SHIELD}<b>Countersign</b><small>${esc(tx.id)} · ruleset ${esc(tx.ruleset)}</small></div>
-    <div class="ext-s"><div style="font-size:13px;margin-bottom:6px">Checking <b>${gbp(tx.amount)}</b> to <b>${esc(sc.merchant.name)}</b></div>
-    <ul class="checks" id="checks"></ul><div class="decision" id="decision"></div></div>`;
+  ext.innerHTML = `<div class="ext-h">${MARK(22)}<b>Countersign</b><small>Checking before you pay</small></div>
+    <div class="ext-pay"><span><b class="num">${money(tx.amount)}</b><small>to ${esc(sc.merchant.name)}</small></span><span class="rail${tx.rail === 'cbdc' ? ' cbdc' : ''}">${tx.rail === 'cbdc' ? 'Digital pound' : 'Crypto, GBPx'}</span></div>
+    <ul class="checks" id="checks"></ul><div class="verdict" id="verdict"></div>`;
+  ext.classList.add('open');
   const ul = $('checks');
   for (const c of tx.checks) {
     const li = document.createElement('li');
-    li.innerHTML = `<span class="ic spin"></span><div><div class="t">${esc(c.t)}</div><div class="d">Checking…</div></div>`;
-    ul.appendChild(li); await sleep(30); li.classList.add('show'); await sleep(420);
+    li.innerHTML = `<span class="ic pending">${SPIN}</span><div><div class="t">${esc(c.t)}</div><div class="d">Checking</div></div>`;
+    ul.appendChild(li); await sleep(20); li.classList.add('show'); await sleep(360);
     const ic = li.querySelector('.ic'); ic.className = 'ic ' + c.s; ic.innerHTML = ICON[c.s];
     li.querySelector('.d').textContent = c.d;
   }
-  await sleep(250);
-  renderConsumer(tx);
+  await sleep(200);
+  renderShopper(tx, true);
   animating = false;
   await refresh(true);
   switchTab(tx.status === 'HOLD' ? 'queue' : 'decisions');
-  toast(tx.status === 'HOLD' ? `${tx.id} held for review` : `${tx.id} ${tx.status === 'APPROVE' ? 'approved automatically' : 'blocked'}`);
 }
 
-function renderConsumer(tx) {
-  const d = $('decision'), ms = $('mstatus'), btn = $('payBtn');
-  if (!d) return;
-  const name = esc(tx.merchant), msg = tx.messages.map(esc).join(' ');
-  let cls, html, status, sbg, scol, btnTxt;
+function renderShopper(tx, fresh = false) {
+  const v = $('verdict'), ms = $('mstatus'), btn = $('payBtn');
+  if (!v) return;
+  const name = esc(tx.merchant), msg = tx.messages.map(esc).join(' '), amt = money(tx.amount);
+  const asset = tx.rail === 'cbdc' ? '' : ' GBPx';
+  let kind, html, status, btnTxt;
   if (tx.status === 'APPROVE' && tx.reviewed) {
-    cls = 'APPROVE'; btnTxt = 'Paid'; sbg = 'var(--ok-l)'; scol = 'var(--ok)'; status = `&#10003; Order confirmed · ${esc(tx.id)}`;
-    html = `<h3>&#10003; Payment complete</h3><p>Thanks for waiting. Your payment to ${name} has been checked and sent.</p>
-      <div class="escrow" style="border-color:#BFE3CD">&#128275; Released from escrow · ${gbp(tx.amount)} GBPx</div>`;
+    kind = 'ok'; btnTxt = 'Paid'; status = `Order confirmed, ${esc(tx.id)}`;
+    html = `<h3>Payment sent</h3></div><p>Thanks for waiting. Your payment to ${name} was checked and released from escrow.</p>`;
   } else if (tx.status === 'APPROVE') {
-    cls = 'APPROVE'; btnTxt = 'Paid'; sbg = 'var(--ok-l)'; scol = 'var(--ok)'; status = `&#10003; Order confirmed · ${esc(tx.id)}`;
-    html = `<h3>&#10003; Safe to pay</h3><p>${name} is a verified merchant and nothing unusual was found. Your payment has been sent.</p>`;
+    kind = 'ok'; btnTxt = 'Paid'; status = `Order confirmed, ${esc(tx.id)}`;
+    html = `<h3>Safe to pay</h3></div><p>${name} is a verified merchant and nothing unusual was found. Your ${amt}${asset} has been sent.</p>`;
   } else if (tx.status === 'DENY' && tx.reviewed) {
-    cls = 'DENY'; btnTxt = 'Cancelled'; sbg = 'var(--deny-l)'; scol = 'var(--deny)'; status = 'Payment cancelled · funds returned.';
-    html = `<h3>Payment cancelled</h3><p>We weren't able to confirm this payment was safe, so we've cancelled it.</p>
-      <div class="escrow" style="border-color:#F2C3BE">&#8617; ${gbp(tx.amount)} GBPx returned to your wallet</div>
-      <p class="muted" style="font-size:12px">If someone asked you to make this payment, please talk to your bank.</p>`;
+    kind = 'deny'; btnTxt = 'Cancelled'; status = 'Payment cancelled. Your money is back in your wallet.';
+    html = `<h3>Payment cancelled</h3></div><p>We couldn’t confirm this payment was safe, so it was cancelled and your ${amt}${asset} was returned.</p>
+      <p>If someone asked you to make this payment, talk to your bank or wallet provider.</p>`;
   } else if (tx.status === 'DENY' && tx.sensitive) {
-    cls = 'NEUTRAL'; btnTxt = 'Payment not completed'; sbg = '#F1F3F6'; scol = '#3D4756'; status = 'Payment could not be completed.';
-    html = `<h3>Payment not completed</h3><p>${msg}</p><p class="muted" style="font-size:12px">No money has left your wallet.</p>`;
+    kind = 'neutral'; btnTxt = 'Not completed'; status = 'Payment could not be completed.';
+    html = `<h3>Payment not completed</h3></div><p>${msg}</p><p>No money has left your wallet.</p>`;
   } else if (tx.status === 'DENY') {
-    cls = 'DENY'; btnTxt = 'Blocked'; sbg = 'var(--deny-l)'; scol = 'var(--deny)'; status = 'Payment blocked by Countersign.';
-    html = `<h3>&#9888; Payment stopped</h3><p>${msg}</p>
-      <p style="font-weight:600;margin-top:8px">What to do next</p>
-      <ul class="next"><li>Don't send money to this site.</li><li>Contact the real firm using the details on the FCA Firm Checker.</li>
-      <li>If you've already paid or shared details, call your bank straight away.</li></ul>
-      <p class="muted" style="font-size:12px">No money has left your wallet.</p>`;
+    kind = 'deny'; btnTxt = 'Stopped'; status = 'Payment stopped by Countersign. No money has left your wallet.';
+    html = `<h3>Don’t pay this site</h3></div><p>${msg}</p>
+      <ul><li>Find the real firm on the FCA Register and contact them directly.</li><li>If you’ve already paid or shared details, call your bank now.</li></ul>`;
   } else {
-    cls = 'HOLD'; btnTxt = 'Pending check'; sbg = 'var(--hold-l)'; scol = '#9A6A00'; status = `Payment pending a quick check · ${esc(tx.id)}`;
-    const fb = tx.feedback === 'self' ? `<div class="flag good">Thanks. We've passed this on to the reviewer.</div>`
-      : tx.feedback === 'coached' ? `<div class="flag">Thank you for telling us. Scammers often pressure people to pay quickly. Your money stays on hold, and a specialist will contact you.</div>`
-      : `<div class="fb" id="fb"><button data-f="self">I'm making this payment myself</button><button data-f="coached">Someone asked me to make this payment</button></div>`;
-    html = `<h3>&#9203; Payment on hold</h3><p>${msg}</p>
-      <div class="escrow">&#128274; <span>Your ${gbp(tx.amount)} is held safely in escrow, not sent yet. Expected decision within <b>15 minutes</b>.</span></div>
-      <p style="font-weight:600;margin:10px 0 0">Help us check: who asked for this payment?</p>${fb}`;
+    kind = 'hold'; btnTxt = 'Waiting for a check'; status = `Payment waiting for a quick check, ${esc(tx.id)}`;
+    const asked = tx.feedback === 'self' ? `<div class="answered">Thanks. We’ve told the reviewer you’re making this payment yourself.</div>`
+      : tx.feedback === 'coached' ? `<div class="answered">Thank you for telling us. Scammers often push people to pay quickly. Your money stays in escrow and a specialist will call you.</div>`
+      : `<div class="ask" id="ask"><b>Did anyone ask you to make this payment?</b><button data-f="self">No, I’m buying this myself</button><button data-f="coached">Yes, someone told me to pay or move my money</button></div>`;
+    html = `<h3>Payment on hold</h3></div><p>${msg}</p>
+      <div class="escrow">${WICON.lock}<span>Your ${amt}${asset} is held in escrow, not sent. You’ll have an answer within 15 minutes.</span></div>${asked}`;
   }
-  d.className = 'decision ' + cls; d.innerHTML = html; d.style.display = 'block';
-  ms.style.display = 'block'; ms.style.background = sbg; ms.style.color = scol; ms.innerHTML = status;
-  btn.disabled = true; btn.textContent = btnTxt; setBadge(cls);
-  const fbEl = $('fb');
-  if (fbEl) fbEl.querySelectorAll('button').forEach(b => b.onclick = () => sendFeedback(tx.id, b.dataset.f));
+  const sameKind = v.dataset.kind === kind;
+  v.className = 'verdict show ' + kind; v.dataset.kind = kind;
+  v.innerHTML = `<div class="vh">${seal(kind, 26, sameKind && !fresh)}${html}`;
+  ms.style.display = 'block'; ms.style.background = `var(--${kind === 'ok' ? 'ok' : kind === 'hold' ? 'hold' : kind === 'deny' ? 'deny' : 'surface-2'}${kind === 'neutral' ? '' : '-tint'})`;
+  ms.style.color = kind === 'neutral' ? 'var(--ink-2)' : COLOR[kind]; ms.textContent = status;
+  btn.disabled = true; btn.classList.remove('busy'); btn.classList.add('done'); btn.textContent = btnTxt; setDot(kind);
+  $('ask')?.querySelectorAll('button').forEach(b => b.onclick = () => sendFeedback(tx.id, b.dataset.f));
 }
 
 async function sendFeedback(id, f) {
   try {
     const tx = await api('POST', `/api/payments/${id}/feedback`, { feedback: f });
-    cur.tx = tx; renderConsumer(tx); await refresh(true);
-    toast(f === 'self' ? `${id}: customer confirmed the payment` : `${id}: customer reports possible scam coaching`);
+    cur.tx = tx; renderShopper(tx); await refresh(true);
   } catch (e) { toast(e.message); }
 }
 
 /* ---------- business side ---------- */
 async function review(id, approve) {
   try {
-    await api('POST', `/api/payments/${id}/review`, { approve });
-    await refresh(true); await syncCustomer();
-    toast(`${id} ${approve ? 'approved and released' : 'denied and refunded'}`);
+    await api('POST', `/api/payments/${id}/review`, { approve, accept_liability: approve ? !!liabOk[id] : undefined });
+    delete liab[id]; delete liabOk[id];
+    await refresh(true); await syncShopper();
+    toast(approve ? `${id} approved. Funds released and liability recorded.` : `${id} denied. Funds returned to the payer.`);
   } catch (e) { toast(e.message); }
 }
 
-function reasonHtml(f) {
-  return `<div class="reason ${f.outcome === 'DENY' ? 'bad' : 'warn'}"><span class="rid">${esc(f.id)}</span> ${esc(f.business)}
-    <div class="muted mono" style="margin-top:3px">${esc(f.internal)}</div></div>`;
+const why = f => `<div class="why"><span class="rid">${esc(f.id)}</span><span>${esc(f.business)}<small>${esc(f.internal)}</small></span></div>`;
+const payerType = p => p.type === 'bank' ? `Digital pound wallet at ${esc(p.provider)}` : p.type === 'exchange' ? `Exchange account at ${esc(p.name)}` : 'Self custody wallet';
+
+function answerBlock(tx) {
+  if (tx.feedback === 'coached') return `<div class="answer coached"><b>Someone asked them to make this payment</b>
+    The customer told us another person asked them to pay or move their money.<div class="rec">This is the most common sign of a scam. Countersign recommends you deny and refund.</div></div>`;
+  if (tx.feedback === 'self') return `<div class="answer self"><b>They’re making this payment themselves</b>
+    The customer says nobody asked them to pay.<div class="rec">This lowers the scam risk but doesn’t rule out account takeover. Check the wallet history before releasing.</div></div>`;
+  return `<div class="answer wait"><span class="pulse"></span><span><b>Waiting for the customer</b>They’ve been asked whether anyone told them to make this payment. Their answer shows here as soon as they reply.</span></div>`;
 }
 
 function renderQueue() {
   const el = $('tab-queue');
   const items = B.queue.map(id => B.decisions.find(t => t.id === id)).filter(Boolean);
-  const c = $('qCnt'); c.textContent = items.length; c.style.display = items.length ? 'inline-block' : 'none';
-  if (!items.length) {
-    el.innerHTML = `<div class="empty" style="height:auto;padding:40px 10px"><b style="color:var(--navy)">No payments waiting for review</b>
-      <div style="margin-top:6px">Held payments appear here with the full reasons, the rule version, and any customer feedback.</div></div>`;
-    return;
-  }
+  const c = $('qCnt'); const was = c.textContent; c.textContent = items.length;
+  c.classList.toggle('on', items.length > 0); if (items.length && was !== String(items.length)) { c.classList.remove('on'); void c.offsetWidth; c.classList.add('on'); }
+  if (!items.length) { el.innerHTML = `<div class="blank"><b>Nothing to review</b>Held payments arrive here with the reasons, the customer’s answer and a 15 minute clock.</div>`; return; }
   el.innerHTML = items.map(tx => {
-    const fb = tx.feedback === 'coached' ? `<div class="flag">Customer says someone asked them to pay: possible scam coaching. Recommend deny and contact customer.</div>`
-      : tx.feedback === 'self' ? `<div class="flag good">Customer confirms they initiated this payment.</div>`
-      : `<div class="muted" style="font-size:12px;margin-top:6px">Waiting for customer feedback…</div>`;
-    return `<div class="card">
-      <div class="top"><span class="pill HOLD">HOLD</span><b>${esc(tx.id)}</b><span class="muted">${gbp(tx.amount)} GBPx → ${esc(tx.merchant.name)}</span>
-        <span class="muted" style="margin-left:auto;font-size:12px">SLA 15 min</span></div>
-      <div class="kv">
-        <div>Payer wallet</div><div class="mono">${short(tx.payer.wallet)} · ${tx.payer.age_days} days old</div>
-        <div>Payee</div><div>${esc(tx.merchant.name)} · <span class="mono">${short(tx.merchant.wallet)}</span> · verified</div>
-        <div>Escrow</div><div class="mono">${short(tx.escrow.addr)} · ${esc(tx.escrow.state)}</div>
-        <div>Ruleset</div><div>${esc(tx.ruleset)}</div>
-      </div>
-      ${tx.result.fired.map(reasonHtml).join('')}
-      <div style="font-size:12px;margin-top:8px"><span class="muted">Customer was told:</span> “${tx.result.fired.map(f => esc(f.consumer)).join(' ')}”</div>
-      ${fb}
-      <div class="actions">
-        <button class="btn ok" data-review="${esc(tx.id)}" data-approve="1">Approve &amp; release</button>
-        <button class="btn no" data-review="${esc(tx.id)}" data-approve="0">Deny &amp; refund</button>
-      </div></div>`;
+    const isNew = !seen.has('q' + tx.id), open = !!liab[tx.id], agreed = !!liabOk[tx.id], amt = money(tx.amount);
+    return `<article class="rcard${isNew ? ' enter' : ''}" data-id="${esc(tx.id)}">
+      <div class="rc-top">${seal('hold', 30, !isNew)}<div><h4 class="num">${amt}${tx.rail === 'cbdc' ? '' : ' ' + esc(tx.asset)} to ${esc(tx.merchant.name)}</h4><small>${esc(tx.id)}, held <span data-ago="${esc(tx.ts)}">${ago(tx.ts)}</span></small></div>
+        <div class="clock"><b data-due="${esc(tx.ts)}">15:00</b>left to decide</div></div>
+      <div class="rc-sec"><h5>Why it’s held</h5>${tx.result.fired.map(why).join('')}</div>
+      <div class="rc-sec"><h5>Customer’s answer</h5>${answerBlock(tx)}</div>
+      <div class="rc-sec"><h5>Payer and funds</h5><dl class="kv">
+        <dt>Wallet</dt><dd><span class="mono">${short(tx.payer.wallet)}</span></dd>
+        <dt>Type</dt><dd>${payerType(tx.payer)}, created ${tx.payer.age_days} days ago</dd>
+        <dt>Escrow</dt><dd>${esc(tx.escrow.state)} in <span class="mono">${short(tx.escrow.addr)}</span></dd>
+        <dt>Shopper was told</dt><dd class="told">“${tx.result.fired.map(f => esc(f.consumer)).join(' ')}”</dd></dl></div>
+      <div class="liab${open ? ' open' : ''}"><div><div class="liab-in">
+        <h6>You take on the liability</h6>
+        <p>If you release this payment and the funds turn out to be fraudulent, your business carries the loss of ${amt}. It can’t be passed back to the customer, and your name is recorded against this decision in the audit log.</p>
+        ${tx.feedback === 'coached' ? `<p class="warnline">The customer told us someone asked them to pay. Approving goes against Countersign’s recommendation.</p>` : ''}
+        ${!tx.feedback ? `<p class="warnline">The customer hasn’t answered yet. You’re deciding without their side of it.</p>` : ''}
+        <label class="agree"><input type="checkbox" data-agree="${esc(tx.id)}"${agreed ? ' checked' : ''}><span>I accept liability for ${amt} on behalf of the business</span></label>
+        <div class="row"><button class="btn quiet" data-cancel="${esc(tx.id)}">Cancel</button><button class="btn white" data-confirm="${esc(tx.id)}"${agreed ? '' : ' disabled'}>Approve and release</button></div>
+      </div></div></div>
+      <div class="acts"><button class="btn danger" data-deny="${esc(tx.id)}">Deny and refund</button><button class="btn primary" data-approve="${esc(tx.id)}"${open ? ' disabled' : ''}>Approve and release</button></div>
+    </article>`;
   }).join('');
-  el.querySelectorAll('[data-review]').forEach(b => b.onclick = () => { b.disabled = true; review(b.dataset.review, b.dataset.approve === '1'); });
+  items.forEach(tx => seen.add('q' + tx.id));
+  el.querySelectorAll('[data-deny]').forEach(b => b.onclick = () => { b.disabled = true; review(b.dataset.deny, false); });
+  el.querySelectorAll('[data-approve]').forEach(b => b.onclick = () => { liab[b.dataset.approve] = true; b.disabled = true; const lb = b.closest('.rcard').querySelector('.liab'); lb.classList.add('open'); setTimeout(() => lb.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 260); });
+  el.querySelectorAll('[data-cancel]').forEach(b => b.onclick = () => { const id = b.dataset.cancel; delete liab[id]; delete liabOk[id]; const card = b.closest('.rcard'); card.querySelector('.liab').classList.remove('open'); card.querySelector('[data-approve]').disabled = false; card.querySelector('[data-agree]').checked = false; card.querySelector('[data-confirm]').disabled = true; });
+  el.querySelectorAll('[data-agree]').forEach(i => i.onchange = () => { liabOk[i.dataset.agree] = i.checked; i.closest('.liab-in').querySelector('[data-confirm]').disabled = !i.checked; });
+  el.querySelectorAll('[data-confirm]').forEach(b => b.onclick = () => { b.disabled = true; review(b.dataset.confirm, true); });
+  tick();
 }
 
 function renderDecisions() {
   const el = $('tab-decisions');
-  if (!B.decisions.length) { el.innerHTML = `<div class="empty" style="height:auto;padding:40px 10px">No decisions yet.</div>`; return; }
+  if (!B.decisions.length) { el.innerHTML = `<div class="blank"><b>No decisions yet</b>Run a payment on the shopper side. Every decision lands here with what each side was told.</div>`; return; }
   el.innerHTML = B.decisions.map(tx => {
-    const r = tx.result;
-    const pills = `<span class="pill ${tx.status}">${tx.status}</span>${tx.reviewed ? ' <span class="pill REVIEWED">REVIEWED</span>' : ''}`;
+    const r = tx.result, kind = KIND[tx.status], key = 'd' + tx.id + tx.status, isNew = !seen.has(key);
+    const statusTxt = tx.status === 'APPROVE' ? (tx.reviewed ? 'Approved after review' : 'Approved') : tx.status === 'HOLD' ? 'Held for review' : (tx.reviewed ? 'Denied after review' : 'Denied');
     const saw = r.fired.length ? r.fired.map(f => esc(f.consumer)).join(' ') : `${esc(tx.merchant.name)} is a verified merchant and nothing unusual was found.`;
-    return `<div class="card">
-      <div class="top">${pills}<b>${esc(tx.id)}</b><span class="muted">${gbp(tx.amount)} GBPx → ${esc(tx.merchant.name)}</span>
-        <span class="muted" style="margin-left:auto;font-size:12px">${new Date(tx.ts).toLocaleTimeString('en-GB')} · ${esc(tx.ruleset)}</span></div>
-      ${r.fired.length ? r.fired.map(reasonHtml).join('') : `<div class="reason"><span class="rid">PASS</span> All checks passed: verified merchant, sanctions clear, normal pattern.</div>`}
-      <div style="font-size:12px;margin-top:6px"><span class="muted">Customer saw:</span> “${saw}”</div>
-      ${tx.merchant.financial ? `<div class="muted" style="font-size:12px;margin-top:4px">Payee is not a Northwind Pay merchant. Blocked on the customer side and shared with the network.</div>` : ''}
-    </div>`;
+    const reasons = r.fired.length ? r.fired.map(why).join('') : `<div class="why"><span class="rid">OK</span><span>All checks passed. Verified merchant, ${tx.rail === 'cbdc' ? 'payer covered by the bank' : 'sanctions clear, normal pattern'}.</span></div>`;
+    const inherit = tx.rail === 'cbdc' ? `<div class="why"><span class="rid">R5</span><span>Payer checks covered by ${esc(tx.payer.provider)}, which holds the digital pound wallet.</span></div>` : '';
+    return `<div class="drow${isNew ? ' enter' : ''}">${seal(kind, 26, !isNew)}
+      <div><h4 class="num">${money(tx.amount)}${tx.rail === 'cbdc' ? '' : ' ' + esc(tx.asset)} to ${esc(tx.merchant.name)}</h4>
+        <div class="meta"><span class="st ${kind}">${statusTxt}</span>, ${tx.rail === 'cbdc' ? 'digital pound' : 'crypto'}, ${esc(tx.id)}</div>
+        <div class="body">${reasons}${inherit}<p style="margin-top:10px">Shopper saw “${saw}”</p>
+        ${tx.feedback ? `<p>Customer said ${tx.feedback === 'self' ? 'they made the payment themselves' : 'someone asked them to pay'}</p>` : ''}
+        ${tx.liability ? `<span class="liabnote">${WICON.lock} Liability accepted by ${esc(tx.liability.by)} at ${time(tx.liability.ts)}</span>` : ''}
+        ${tx.merchant.financial ? `<p class="muted">Not a Northwind Pay merchant. Blocked on the shopper’s side and shared with the Countersign network.</p>` : ''}</div></div>
+      <div class="when">${time(tx.ts)}<br>${esc(tx.ruleset)}</div></div>`;
   }).join('');
+  B.decisions.forEach(tx => seen.add('d' + tx.id + tx.status));
 }
 
 function renderRules() {
   const el = $('tab-rules'), p = B.pending;
-  el.innerHTML = `<div class="muted" style="font-size:12.5px;margin-bottom:10px">Ruleset <b>${esc(B.ruleset)}</b>. Each rule is code on the server, cites its source, and is versioned. Changes need a second approver and are recorded in the audit log.</div>` +
+  const outTxt = { DENY: 'Deny', HOLD: 'Hold', INHERIT: 'Use bank’s checks' };
+  el.innerHTML = `<p class="intro">Ruleset ${esc(B.ruleset)}. Every rule is code on the server, cites its source and is versioned. A change needs a second approver and is written to the audit log.</p>` +
     B.rules.map(r => `<div class="rule">
-      <div class="rh"><b>${esc(r.id)}</b><span>${esc(r.name)}</span><span style="margin-left:auto" class="pill ${r.outcome === 'PARTIAL' ? 'REVIEWED' : r.outcome}">${r.outcome}</span></div>
-      <div class="cond">${esc(r.cond)}</div><div class="src">Source: ${esc(r.src)}</div>
-      ${r.editable ? `<div class="edit">Amount over £<input id="pAmt" type="number" step="100" value="${p ? p.amount : B.params.amount}">
-        Wallet younger than <input id="pAge" type="number" step="1" value="${p ? p.age_days : B.params.age_days}"> days
-        <button class="btn sec" id="proposeBtn">Propose change &amp; replay</button></div>` : ''}
-    </div>`).join('') + (p ? `<div class="pending" id="pendingBox">
-      <b>Pending change to R4</b> (proposed by ${esc(p.by)}, needs a second approver)<br>
-      Amount over £${B.params.amount.toLocaleString()} → <b>£${p.amount.toLocaleString()}</b> · wallet younger than ${B.params.age_days} → <b>${p.age_days} days</b>
-      <div style="margin-top:10px"><b>Replay on last ${p.total} transactions</b></div>
-      <div style="display:grid;grid-template-columns:90px 1fr 70px;gap:6px;align-items:center;margin-top:6px">
-        <span>Current</span><div class="bar"><i style="width:${p.before / p.total * 100}%"></i></div><span>${p.before} holds</span>
-        <span>Proposed</span><div class="bar"><i style="width:${p.after / p.total * 100}%"></i></div><span>${p.after} holds</span></div>
-      <div style="font-size:12px">${p.added.length ? `Newly held: <span class="mono">${p.added.join(', ')}</span><br>` : ''}${p.removed.length ? `No longer held: <span class="mono">${p.removed.join(', ')}</span>` : ''}${!p.added.length && !p.removed.length ? 'No change in outcomes.' : ''}</div>
-      <div class="actions"><button class="btn pri" id="approveChange">Approve as second approver (J. Okafor)</button><button class="btn sec" id="discardChange">Discard</button></div>
+      <div class="rh"><span class="rid">${esc(r.id)}</span><b>${esc(r.name)}</b><span class="out ${r.outcome}">${outTxt[r.outcome] || esc(r.outcome)}</span></div>
+      <div class="cond">${esc(r.cond)}</div><div class="src">${esc(r.src)}</div>
+      ${r.editable ? `<div class="edit">Hold when the amount is over £<input id="pAmt" type="number" step="100" value="${p ? p.amount : B.params.amount}"> and the wallet is younger than <input id="pAge" type="number" step="1" value="${p ? p.age_days : B.params.age_days}"> days
+        <button class="btn quiet" id="proposeBtn">Propose and replay</button></div>` : ''}
+    </div>`).join('') + (p ? `<div class="proposal" id="pendingBox">
+      <h5>Proposed change to R4</h5>
+      <div class="sub">From £${B.params.amount.toLocaleString('en-GB')} and ${B.params.age_days} days to £${p.amount.toLocaleString('en-GB')} and ${p.age_days} days. Proposed by ${esc(p.by)}, needs a second approver.</div>
+      <div class="bars num"><span>Now</span><div class="track"><i class="now" style="width:${p.before / p.total * 100}%"></i></div><span>${p.before} holds</span>
+        <span>Proposed</span><div class="track"><i style="width:${p.after / p.total * 100}%"></i></div><span>${p.after} holds</span></div>
+      <div class="sub">Replayed on the last ${p.total} payments. ${p.added.length ? `Newly held <span class="mono">${p.added.join(', ')}</span>. ` : ''}${p.removed.length ? `No longer held <span class="mono">${p.removed.join(', ')}</span>.` : ''}${!p.added.length && !p.removed.length ? 'No change in outcomes.' : ''}</div>
+      <div class="row" style="display:flex;gap:8px;margin-top:14px"><button class="btn brand" id="approveChange">Approve as J. Okafor</button><button class="btn quiet" id="discardChange">Discard</button></div>
     </div>` : '');
   $('proposeBtn').onclick = async () => {
     try { B = await api('POST', '/api/rules/propose', { amount: Number($('pAmt').value), age_days: Number($('pAge').value) }); lastRev = B.rev; renderAll(); $('pendingBox')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-    catch (e) { toast(e.message === 'no change' ? 'No change to propose' : e.message); }
+    catch (e) { toast(e.message === 'no change' ? 'Change a value first' : e.message); }
   };
   if (p) {
-    $('approveChange').onclick = async () => { B = await api('POST', '/api/rules/approve'); lastRev = B.rev; renderAll(); toast(`Ruleset updated to ${B.ruleset}`); };
+    $('approveChange').onclick = async () => { B = await api('POST', '/api/rules/approve'); lastRev = B.rev; renderAll(); toast(`Ruleset is now ${B.ruleset}`); };
     $('discardChange').onclick = async () => { B = await api('POST', '/api/rules/discard'); lastRev = B.rev; renderAll(); };
   }
 }
@@ -725,19 +903,15 @@ function renderRules() {
 function renderAudit() {
   const el = $('tab-audit');
   const v = verifyRes && verifyRes.rev === B.rev ? verifyRes : null;
-  el.innerHTML = `<div class="toolbar">
-      <button class="btn pri" id="verifyBtn">Verify chain</button><button class="btn sec" id="tamperBtn">Simulate tampering</button>
-      <span class="muted" style="font-size:12px">Verification runs on the server: each entry stores the SHA-256 of the one before, so any edit breaks the chain.</span></div>
-    ${v ? (v.broken_at ? `<div class="audit-bad" style="display:block">&#10005; Chain broken at entry #${v.broken_at}. This record was changed after it was written, so nothing after it can be trusted.</div>`
-      : `<div class="audit-ok" style="display:block">&#10003; Chain intact: ${v.entries} entries verified on the server.</div>`) : ''}
-    ${B.audit.map(e => `<div class="ae${v && v.broken_at === e.seq ? ' broken' : ''}" data-seq="${e.seq}"><div class="seq">#${e.seq}</div>
-      <div><span class="ev">${esc(e.event)}</span> <span class="muted">· ${esc(e.actor)} · ${new Date(e.ts).toLocaleTimeString('en-GB')} · ${esc(e.ruleset)}</span>
-      <div>${esc(e.detail)}</div><div class="hash mono">hash ${e.hash.slice(0, 16)}… · prev ${e.prev.slice(0, 16)}…</div></div></div>`).join('')}`;
+  el.innerHTML = `<div class="toolbar"><button class="btn brand" id="verifyBtn">Verify chain</button><button class="btn quiet" id="tamperBtn">Simulate tampering</button>
+      <span>Each entry stores the SHA256 fingerprint of the one before it, so editing any record breaks every link after it.</span></div>
+    ${v ? (v.broken_at ? `<div class="vres bad">Chain broken at entry ${v.broken_at}. That record was changed after it was written.</div>`
+      : `<div class="vres good">Chain intact. ${v.entries} entries verified on the server.</div>`) : ''}
+    ${B.audit.map(e => `<div class="ae${v && v.broken_at === e.seq ? ' broken' : ''}" data-seq="${e.seq}"><div class="seq">${e.seq}</div>
+      <div><span class="ev">${esc(EVENT[e.event] || e.event)}</span> <span class="who">${esc(e.actor)}, ${time(e.ts)}, ${esc(e.ruleset)}</span>
+      <div class="det">${esc(e.detail)}</div><div class="hash mono">${e.hash.slice(0, 20)}… after ${e.prev.slice(0, 12)}…</div></div></div>`).join('')}`;
   $('verifyBtn').onclick = verify;
-  $('tamperBtn').onclick = async () => {
-    const r = await api('POST', '/api/audit/tamper');
-    await refresh(true); await verify(); toast(`Entry #${r.edited} edited. Verification catches it.`);
-  };
+  $('tamperBtn').onclick = async () => { const r = await api('POST', '/api/audit/tamper'); await refresh(true); await verify(); toast(`Entry ${r.edited} edited. Verification caught it.`); };
 }
 
 async function verify() {
@@ -748,99 +922,101 @@ async function verify() {
 
 function renderApi() {
   const el = $('tab-api'); if (!el) return;
-  el.innerHTML = `<div class="muted" style="font-size:12.5px;margin-bottom:10px">Last calls from this browser to the Countersign API.
-    The customer endpoints never return internal reasons or sanctions details. Compare <span class="mono">POST /api/payments</span> with the business data in <span class="mono">GET /api/state</span>.</div>` +
-    (calls.length ? calls.map(c => `<div class="api"><div class="ah"><span class="m">${c.method}</span><span class="mono">${esc(c.path)}</span>
+  el.innerHTML = `<p class="intro">The last calls from this browser. Shopper endpoints never return internal reasons or sanctions details. Compare <span class="mono">POST /api/payments</span> with <span class="mono">GET /api/state</span>.</p>` +
+    (calls.length ? calls.map(c => `<div class="call"><div class="ch"><span class="m">${c.method}</span><span class="mono">${esc(c.path)}</span>
       <span class="muted">${c.t.toLocaleTimeString('en-GB')}</span><span class="code" style="color:${c.status < 300 ? 'var(--ok)' : 'var(--deny)'}">${c.status}</span></div>
       <pre>${c.body ? esc('// request\n' + JSON.stringify(c.body, null, 2) + '\n// response\n') : ''}${esc(JSON.stringify(c.data, null, 2).slice(0, 2500))}</pre></div>`).join('')
-      : '<div class="empty" style="height:auto;padding:30px">No calls yet. Run a scenario.</div>');
+      : '<div class="blank"><b>No calls yet</b>Run a payment to see the requests.</div>');
 }
 
 function renderAll() {
-  $('rsVer').textContent = B.ruleset;
+  $('rsVer').textContent = B.ruleset; if (B.reviewer) $('reviewer').textContent = B.reviewer;
   renderQueue(); renderDecisions(); renderRules(); renderAudit();
+}
+
+function tick() {
+  document.querySelectorAll('[data-due]').forEach(el => {
+    const left = Math.max(0, 900 - Math.floor((Date.now() - new Date(el.dataset.due)) / 1000));
+    el.textContent = `${String(Math.floor(left / 60)).padStart(2, '0')}:${String(left % 60).padStart(2, '0')}`;
+  });
+  document.querySelectorAll('[data-ago]').forEach(el => el.textContent = ago(el.dataset.ago));
 }
 
 /* ---------- sync ---------- */
 async function refresh(force) {
   try {
     const st = await api('GET', '/api/state', null, false);
-    setLive(true);
     if (force || st.rev !== lastRev) {
       B = st; lastRev = st.rev;
       if (!animating) {
-        const active = document.activeElement;
-        if (!(active && active.tagName === 'INPUT')) renderAll(); else { renderQueue(); renderDecisions(); renderAudit(); $('rsVer').textContent = B.ruleset; }
+        const a = document.activeElement;
+        if (a && a.tagName === 'INPUT' && a.type === 'number') { renderQueue(); renderDecisions(); renderAudit(); $('rsVer').textContent = B.ruleset; }
+        else renderAll();
       }
     }
-  } catch (e) { setLive(false); }
+  } catch (e) { /* the next poll tries again */ }
 }
 
-async function syncCustomer() {
+async function syncShopper() {
   if (!cur || !cur.tx || animating || cur.tx.status !== 'HOLD') return;
   try {
     const tx = await api('GET', `/api/payments/${cur.tx.id}`, null, false);
-    if (tx.status !== cur.tx.status || tx.feedback !== cur.tx.feedback) { cur.tx = tx; renderConsumer(tx); }
+    if (tx.status !== cur.tx.status || tx.feedback !== cur.tx.feedback) { const changed = tx.status !== cur.tx.status; cur.tx = tx; renderShopper(tx, changed); }
   } catch (e) { /* ignore */ }
 }
 
-function setLive(ok) {
-  $('live').classList.toggle('off', !ok);
-  $('liveTxt').textContent = MODE === 'local' ? 'Offline mode' : ok ? 'API live' : 'API offline';
-  $('live').title = MODE === 'local' ? 'No Flask server found, so the built-in engine is running in this browser' : 'Connection to the Countersign Flask API';
-}
-
-/* ---------- UI plumbing ---------- */
+/* ---------- plumbing ---------- */
 function switchTab(t) {
-  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.t === t));
-  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x.id === 'tab-' + t));
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x.id === 'tab-' + t));
+  moveBar();
 }
 function setView(v) {
   VIEW = v; $('main').className = v === 'split' ? '' : 'v-' + v;
-  document.querySelectorAll('#views button').forEach(b => b.classList.toggle('active', b.dataset.v === v));
+  document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === v)); moveThumb($('viewSeg'));
   const u = new URL(location.href); u.searchParams.set('view', v); if (ROOM !== 'demo') u.searchParams.set('room', ROOM);
   try { history.replaceState(null, '', u); } catch (e) { /* not allowed for file:// pages */ }
+  requestAnimationFrame(() => { moveBar(); moveThumb($('scenSeg')); });
 }
 let toastTimer;
-function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600); }
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2800); }
 
 async function reset() {
   if (animating) return;
-  B = await api('POST', '/api/reset'); lastRev = B.rev; verifyRes = null; cur = null;
-  emptyPage(); renderAll(); switchTab('queue'); toast('Demo reset');
+  B = await api('POST', '/api/reset'); lastRev = B.rev; verifyRes = null; cur = null; seen.clear();
+  renderAll(); switchTab('queue'); loadScenario('s1', true); toast('Demo reset');
 }
 
-document.querySelectorAll('#scenBtns button').forEach(b => b.onclick = () => loadScenario(b.dataset.s));
+$('markTop').innerHTML = MARK(30); $('markExt').innerHTML = MARK(20); $('markConsole').innerHTML = MARK(16);
+document.querySelectorAll('#scenSeg button').forEach(b => b.onclick = () => choose(b.dataset.s));
 document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => switchTab(b.dataset.t));
-document.querySelectorAll('#views button').forEach(b => b.onclick = () => setView(b.dataset.v));
+document.querySelectorAll('#viewSeg button').forEach(b => b.onclick = () => setView(b.dataset.v));
 $('resetBtn').onclick = reset;
-$('extBtn').onclick = () => { const e = $('ext'); if (e.innerHTML) e.style.display = e.style.display === 'none' ? 'block' : 'none'; };
+$('extBtn').onclick = () => { const e = $('ext'); if (e.innerHTML) e.classList.toggle('open'); };
 $('copyLink').onclick = async () => {
-  if (MODE === 'local') { toast('The two-device reviewer link needs the Flask server (python app.py).'); return; }
+  if (MODE === 'local') { toast('The reviewer link needs the Flask server running'); return; }
   const u = new URL(location.origin + location.pathname); u.searchParams.set('room', ROOM); u.searchParams.set('view', 'business');
-  try { await navigator.clipboard.writeText(u.toString()); toast('Reviewer link copied. Open it on a second device.'); }
-  catch (e) { toast(u.toString()); }
+  try { await navigator.clipboard.writeText(u.toString()); toast('Reviewer link copied. Open it on a second device.'); } catch (e) { toast(u.toString()); }
 };
 document.addEventListener('keydown', e => {
-  if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-  if (['1', '2', '3', '4'].includes(e.key)) loadScenario('s' + e.key);
+  if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || e.metaKey || e.ctrlKey) return;
+  if (['1', '2', '3', '4'].includes(e.key)) choose('s' + e.key);
   if (e.key.toLowerCase() === 'r') reset();
 });
+window.addEventListener('resize', () => { moveThumb($('scenSeg')); moveThumb($('viewSeg')); moveBar(); });
 
 (async () => {
-  $('roomName').textContent = ROOM;
-  setView(VIEW); emptyPage(); renderApi();
   try {
     if (location.protocol === 'file:') throw new Error('file');
     SC = await api('GET', '/api/scenarios', null, false);
     if (!SC || !SC.s1) throw new Error('bad response');
-  } catch (e) {
-    MODE = 'local';
-    SC = await api('GET', '/api/scenarios', null, false);
-  }
-  setLive(true);
+  } catch (e) { MODE = 'local'; SC = await api('GET', '/api/scenarios', null, false); }
+  setView(VIEW); renderApi();
   await refresh(true);
-  setInterval(() => { refresh(false); syncCustomer(); }, 1500);
+  await choose('s1', true);
+  document.fonts?.ready.then(() => { moveThumb($('scenSeg')); moveThumb($('viewSeg')); moveBar(); });
+  setInterval(() => { refresh(false); syncShopper(); }, 1500);
+  setInterval(tick, 1000);
 })();
 }
 </script>
