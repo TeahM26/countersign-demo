@@ -50,21 +50,31 @@ svg{display:block}
 .reset:hover{background:var(--surface-2);color:var(--ink)}
 
 /* ---------- layout ---------- */
-main{flex:1;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:18px;padding:18px 20px 20px;min-height:0}
-main.v-shopper{grid-template-columns:minmax(0,1fr)} main.v-shopper #paneBiz{display:none}
-main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{display:none}
+main{flex:1;display:flex;padding:18px 20px 20px;min-height:0;min-width:0}
+#paneShop{flex:0 1 var(--split,52%);min-width:340px}
+#paneBiz{flex:1 1 0;min-width:340px}
+.divider{flex:none;width:18px;cursor:col-resize;display:flex;align-items:center;justify-content:center;touch-action:none;border-radius:8px}
+.divider::before{content:"";width:4px;height:44px;border-radius:2px;background:var(--line-2);transition:background .2s,height .3s var(--ease)}
+.divider:hover::before,.divider.drag::before,.divider:focus-visible::before{background:var(--iris);height:80px}
+.divider:focus-visible{outline:none}
+body.resizing{cursor:col-resize;user-select:none}
+body.resizing .page,body.resizing .console{pointer-events:none}
+main.v-shopper #paneBiz,main.v-shopper .divider,main.v-business #paneShop,main.v-business .divider{display:none}
+main.v-shopper #paneShop,main.v-business #paneBiz{flex:1 1 auto}
 .pane{display:flex;flex-direction:column;min-height:0;min-width:0}
-.pane-h{display:flex;align-items:baseline;gap:10px;margin:0 2px 10px}
+.pane-h{display:flex;align-items:baseline;gap:10px;margin:0 2px 10px;min-width:0;white-space:nowrap}
 .pane-h h2{margin:0;font-size:15px;font-weight:600}
-.pane-h span{color:var(--ink-3);font-size:13px}
+.pane-h span{color:var(--ink-3);font-size:13px;overflow:hidden;text-overflow:ellipsis;min-width:0}
 
 /* ---------- browser ---------- */
-.browser{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;background:var(--surface);border-radius:14px;box-shadow:var(--lift);border:1px solid var(--line);overflow:hidden}
+.browser{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;background:var(--surface);border-radius:14px;box-shadow:var(--lift);border:1px solid var(--line);overflow:hidden;container:shop/inline-size}
 .chrome{display:flex;align-items:center;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--surface-2)}
 .lights{display:flex;gap:6px}.lights i{width:10px;height:10px;border-radius:50%;background:#D9DBE1}
 .navs{display:flex;gap:6px;color:#B3B5BE}
 .url{flex:1;display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:6px 10px;font-size:13px;color:var(--ink-2);min-width:0}
-.url .host{color:var(--ink);font-weight:500}
+.url .host{color:var(--ink);font-weight:500;flex:0 1 auto;min-width:0}
+#urlText>span+span{flex:0 1000 auto;min-width:0}
+#urlText{display:flex;min-width:0;overflow:hidden}
 .url span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .extbtn{position:relative;width:32px;height:30px;border-radius:8px;display:grid;place-items:center}
 .extbtn:hover{background:var(--surface)}
@@ -89,7 +99,7 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 .co .total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);margin-top:8px;padding-top:10px;font-weight:600}
 .co .total b{font-size:18px;font-weight:650;letter-spacing:-.01em}
 .methods{margin-top:16px;display:flex;flex-direction:column;gap:6px}
-.method{display:grid;grid-template-columns:18px 26px 1fr;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink-3)}
+.method{display:grid;grid-template-columns:18px 26px minmax(0,1fr);gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink-3)}
 .method .radio{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--line-2)}
 .method b{display:block;color:var(--ink-2);font-weight:600}
 .method small{display:block;font-size:12px}
@@ -98,13 +108,17 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 .method.on .radio{border:5px solid var(--ink)}
 .wallets{margin:8px 0 2px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .wallets .wh{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-3);padding:8px 12px;background:var(--surface-2);border-bottom:1px solid var(--line)}
-.wallet{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:10px 12px;font-size:13px;opacity:.5}
+.wallet{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;font-size:13px;opacity:.5}
 .wallet+.wallet{border-top:1px solid var(--line)}
 .wallet.on{opacity:1}
 .wallet .ico{width:28px;height:28px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-2)}
 .wallet b{display:block;font-weight:600}
-.wallet small{display:block;color:var(--ink-3);font-size:12px;white-space:nowrap}
-.wallet .bal{text-align:right;font-size:12px;color:var(--ink-2)}
+.wallet>span{min-width:0}
+.wallet b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wallet small{display:flex;gap:6px;min-width:0;color:var(--ink-3);font-size:12px;white-space:nowrap}
+.wallet small .lbl{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.wallet small .mono{flex:none}
+.wallet .bal{text-align:right;font-size:12px;color:var(--ink-2);white-space:nowrap}
 .paybtn{width:100%;margin-top:14px;border-radius:10px;padding:12px 14px;color:#fff;font-weight:600;font-size:14px;transition:transform .15s var(--ease),opacity .2s;display:flex;align-items:center;justify-content:center;gap:10px}
 .paybtn:active{transform:scale(.985)}
 .paybtn:disabled{cursor:default}
@@ -123,7 +137,7 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 .scam .badges span{background:rgba(255,255,255,.12);border-radius:6px;padding:4px 8px}
 
 /* ---------- extension sheet ---------- */
-.ext{position:absolute;top:50px;right:12px;width:372px;max-height:calc(100% - 62px);overflow:auto;scrollbar-gutter:stable;background:var(--surface);border-radius:16px;box-shadow:var(--float);z-index:5;transform-origin:top right;display:none}
+.ext{position:absolute;top:50px;right:12px;width:min(372px,calc(100% - 24px));max-height:calc(100% - 62px);overflow:auto;scrollbar-gutter:stable;background:var(--surface);border-radius:16px;box-shadow:var(--float);z-index:5;transform-origin:top right;display:none}
 .ext.open{display:block;animation:sheet .32s var(--ease)}
 @keyframes sheet{from{opacity:0;transform:translateY(-6px) scale(.97)}}
 .ext-h{display:flex;align-items:center;gap:9px;padding:14px 16px 12px}
@@ -181,8 +195,8 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 @keyframes draw{to{stroke-dashoffset:0}}
 
 /* ---------- console ---------- */
-.console{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--lift);overflow:hidden}
-.c-head{display:flex;align-items:center;gap:10px;padding:14px 18px 0}
+.console{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--lift);overflow:hidden;container:biz/inline-size}
+.c-head{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;padding:14px 18px 0}
 .c-head b{font-family:var(--display);font-weight:650;font-size:17px;letter-spacing:-.015em}
 .nw{width:26px;height:26px;border-radius:7px;background:#0E3B5C;color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;letter-spacing:-.02em}
 .c-head .by{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-3);padding-left:10px;margin-left:2px;border-left:1px solid var(--line-2)}
@@ -190,8 +204,9 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 .c-head .who strong{color:var(--ink-2);font-weight:600}
 .iconbtn{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ink-2)}
 .iconbtn:hover{background:var(--surface-2);color:var(--ink)}
-.tabs{position:relative;display:flex;gap:4px;padding:10px 12px 0;border-bottom:1px solid var(--line)}
-.tabs button{padding:9px 8px 11px;color:var(--ink-3);display:flex;gap:7px;align-items:center;transition:color .2s}
+.tabs{position:relative;display:flex;gap:4px;padding:10px 12px 0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{white-space:nowrap;flex:none;padding:9px 8px 11px;color:var(--ink-3);display:flex;gap:7px;align-items:center;transition:color .2s}
 .tabs button:hover{color:var(--ink)}
 .tabs button.on{color:var(--ink);font-weight:600}
 .tabs .bar{position:absolute;bottom:-1px;left:0;height:2px;background:var(--iris);border-radius:2px;transition:transform .38s var(--ease),width .38s var(--ease)}
@@ -208,17 +223,18 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 .rcard.enter{animation:enter .55s var(--ease)}
 @keyframes enter{from{opacity:0;transform:translateY(10px)}}
 .rc-top{display:flex;gap:12px;align-items:center;padding:14px 16px}
+.rc-top>div:not(.clock){min-width:0;flex:1}
 .rc-top h4{margin:0;font-size:15px;font-weight:600;letter-spacing:-.01em}
 .rc-top small{display:block;color:var(--ink-3);font-size:12px;margin-top:1px}
 .clock{margin-left:auto;text-align:right;font-size:12px;color:var(--ink-3)}
 .clock b{display:block;font-size:16px;color:var(--hold);font-weight:650;font-variant-numeric:tabular-nums}
 .rc-sec{padding:12px 16px;border-top:1px solid var(--line)}
 .rc-sec h5{margin:0 0 8px;font-size:12px;font-weight:600;color:var(--ink-3)}
-.why{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:13px}
+.why{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;font-size:13px}
 .why+.why{margin-top:8px}
 .rid{font-size:11px;font-weight:700;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-variant-numeric:tabular-nums;margin-top:1px}
-.why small{display:block;color:var(--ink-3);font-size:12px;margin-top:3px}
-.kv{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;font-size:13px}
+.why small{display:block;color:var(--ink-3);font-size:12px;margin-top:3px;overflow-wrap:anywhere}
+.kv{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;font-size:13px}
 .kv dt{color:var(--ink-3)} .kv dd{margin:0}
 .answer{border-radius:12px;padding:12px 14px;font-size:13px}
 .answer b{display:block;font-size:14px;margin-bottom:2px}
@@ -229,7 +245,7 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 .answer.self{background:var(--ok-tint)} .answer.self b{color:var(--ok)}
 .answer.coached{background:var(--deny-tint)} .answer.coached b{color:var(--deny)}
 .answer .rec{margin-top:6px;color:var(--ink-2)}
-.told{font-size:13px;color:var(--ink-2)}
+.told{font-size:13px;color:var(--ink-2);overflow-wrap:anywhere}
 .acts{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line);background:var(--surface-2)}
 .btn{border-radius:10px;padding:9px 14px;font-weight:600;font-size:13px;transition:transform .15s var(--ease),background .2s,opacity .2s;border:1px solid transparent}
 .btn:active{transform:scale(.98)}
@@ -258,7 +274,7 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 .liab-in .btn.white{background:#fff;color:var(--ink)}
 
 /* decision rows */
-.drow{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;padding:14px 2px;border-bottom:1px solid var(--line)}
+.drow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:start;padding:14px 2px;border-bottom:1px solid var(--line)}
 .drow.enter{animation:enter .55s var(--ease)}
 .drow h4{margin:0;font-size:14px;font-weight:600}
 .drow .meta{color:var(--ink-3);font-size:12px;margin-top:1px}
@@ -292,12 +308,12 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 .toolbar span{font-size:12px;color:var(--ink-3);flex-basis:100%}
 .vres{border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px;animation:rise .35s var(--ease)}
 .vres.good{background:var(--ok-tint);color:var(--ok)}.vres.bad{background:var(--deny-tint);color:var(--deny)}
-.ae{display:grid;grid-template-columns:36px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.ae{display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
 .ae.broken{background:var(--deny-tint);border-radius:8px;padding:10px 8px}
 .ae .seq{color:var(--ink-3);font-variant-numeric:tabular-nums}
 .ae .ev{font-weight:600}
 .ae .who{color:var(--ink-3);font-size:12px}
-.ae .det{color:var(--ink-2);margin-top:2px}
+.ae .det{color:var(--ink-2);margin-top:2px;overflow-wrap:anywhere}
 .ae .hash{color:var(--ink-3);margin-top:3px}
 
 /* api */
@@ -311,7 +327,11 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,12px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;box-shadow:var(--float);opacity:0;transition:opacity .25s var(--ease),transform .35s var(--ease);pointer-events:none;z-index:30;white-space:nowrap}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
-@media (max-width:1180px){main{grid-template-columns:minmax(0,1fr)}.m-body{grid-template-columns:1fr}.browser{min-height:720px}.console{min-height:640px}}
+@container shop (max-width:720px){.m-body{grid-template-columns:minmax(0,1fr);gap:18px}.prod .art{aspect-ratio:auto;height:180px}.co{max-width:460px}}
+@container shop (max-width:520px){.m-nav .links{display:none}.m-nav,.scam{padding-left:18px;padding-right:18px}.m-body{padding:18px}.scam h3{font-size:23px}.ext{left:12px;width:auto}}
+@container biz (max-width:600px){.kv{grid-template-columns:minmax(0,1fr);gap:0}.kv dd{margin-bottom:8px}.c-head .who>span:first-child{display:none}.drow{grid-template-columns:auto minmax(0,1fr)}.drow .when{grid-column:2;text-align:left}.rc-top{flex-wrap:wrap}.acts .btn{flex:1}.liab-in .row .btn{flex:1}}
+@container biz (max-width:460px){.c-head .by{border-left:0;padding-left:0;margin-left:0;flex-basis:100%;order:3}.c-head .who{margin-left:0;width:100%;order:4}.tabs{gap:0;padding:8px 8px 0}.tabs button{padding:9px 7px 11px}.clock{flex-basis:100%;margin-left:44px;text-align:left;display:flex;gap:6px;align-items:baseline}.clock b{display:inline;font-size:14px}.rc-sec,.rc-top{padding-left:14px;padding-right:14px}}
+@media (max-width:900px){main{flex-direction:column;gap:18px}#paneShop,#paneBiz{flex:none;min-width:0}.divider{display:none}.browser{min-height:760px}.console{min-height:640px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -348,6 +368,8 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
       <div class="ext" id="ext" role="dialog" aria-label="Countersign check"></div>
     </div>
   </section>
+
+  <div class="divider" id="divider" role="separator" aria-orientation="vertical" aria-label="Resize the shopper and business panels" aria-valuemin="25" aria-valuemax="75" aria-valuenow="52" tabindex="0" title="Drag to resize. Double click to reset."></div>
 
   <section class="pane" id="paneBiz">
     <div class="pane-h"><h2>Business</h2><span>Northwind Pay, the payment processor, runs its compliance on the Countersign console</span></div>
@@ -669,8 +691,8 @@ function walletRows(sc) {
   const ex = p.type === 'exchange' ? p : { name: 'Kestrel Exchange', provider: 'Connected exchange account', wallet: '0x51d0a3b2c4e5f60718293a4b5c6d7e8f9a0b11e9', balance: 1240 };
   const se = p.type === 'self' ? p : { name: 'Browser wallet', provider: 'Self custody', wallet: '0x3c19b07e44d2a8f1c6e5b9d0a7f2e3c4b5a6d1f8', balance: 310 };
   return `<div class="wallets"><div class="wh"><span>Connected wallets</span><span>GBPx on ${esc(p.network || 'Ethereum')}</span></div>
-    <div class="wallet${p.type === 'exchange' ? ' on' : ''}"><span class="ico">${WICON.exchange}</span><span><b>Kestrel Exchange</b><small>Exchange account <span class="mono">${short(ex.wallet)}</span></small></span><span class="bal num">${money(ex.balance)}</span></div>
-    <div class="wallet${p.type === 'self' ? ' on' : ''}"><span class="ico">${WICON.self}</span><span><b>Browser wallet</b><small>Self custody <span class="mono">${short(se.wallet)}</span></small></span><span class="bal num">${money(se.balance)}</span></div></div>`;
+    <div class="wallet${p.type === 'exchange' ? ' on' : ''}"><span class="ico">${WICON.exchange}</span><span><b>Kestrel Exchange</b><small><span class="lbl">Exchange account</span><span class="mono">${short(ex.wallet)}</span></small></span><span class="bal num">${money(ex.balance)}</span></div>
+    <div class="wallet${p.type === 'self' ? ' on' : ''}"><span class="ico">${WICON.self}</span><span><b>Browser wallet</b><small><span class="lbl">Self custody</span><span class="mono">${short(se.wallet)}</span></small></span><span class="bal num">${money(se.balance)}</span></div></div>`;
 }
 
 function loadScenario(key, keepView = false) {
@@ -1006,6 +1028,30 @@ document.addEventListener('keydown', e => {
   if (e.key.toLowerCase() === 'r') reset();
 });
 window.addEventListener('resize', () => { moveThumb($('scenSeg')); moveThumb($('viewSeg')); moveBar(); });
+/* draggable split between the shopper and business panels */
+{
+  const main = $('main'), dv = $('divider');
+  const setSplit = (p, save) => {
+    p = Math.min(75, Math.max(25, p)); main.style.setProperty('--split', p + '%'); dv.setAttribute('aria-valuenow', Math.round(p));
+    if (save) try { localStorage.setItem('cs-split', p); } catch (e) { /* storage blocked */ }
+  };
+  try { const v = parseFloat(localStorage.getItem('cs-split')); if (v) setSplit(v); } catch (e) { /* storage blocked */ }
+  dv.addEventListener('pointerdown', e => { dv.setPointerCapture(e.pointerId); dv.classList.add('drag'); document.body.classList.add('resizing'); e.preventDefault(); });
+  dv.addEventListener('pointermove', e => {
+    if (!dv.classList.contains('drag')) return;
+    const r = main.getBoundingClientRect(), padL = parseFloat(getComputedStyle(main).paddingLeft), padR = parseFloat(getComputedStyle(main).paddingRight);
+    setSplit((e.clientX - r.left - padL - dv.offsetWidth / 2) / (r.width - padL - padR - dv.offsetWidth) * 100);
+  });
+  const stop = () => { if (!dv.classList.contains('drag')) return; dv.classList.remove('drag'); document.body.classList.remove('resizing'); setSplit(parseFloat(dv.getAttribute('aria-valuenow')), true); };
+  dv.addEventListener('pointerup', stop); dv.addEventListener('pointercancel', stop);
+  dv.addEventListener('dblclick', () => setSplit(52, true));
+  dv.addEventListener('keydown', e => {
+    const now = parseFloat(dv.getAttribute('aria-valuenow'));
+    if (e.key === 'ArrowLeft') { setSplit(now - 2, true); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { setSplit(now + 2, true); e.preventDefault(); }
+  });
+  if (window.ResizeObserver) new ResizeObserver(() => moveBar()).observe(document.querySelector('.console'));
+}
 
 (async () => {
   try {
