@@ -123,7 +123,7 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 .scam .badges span{background:rgba(255,255,255,.12);border-radius:6px;padding:4px 8px}
 
 /* ---------- extension sheet ---------- */
-.ext{position:absolute;top:50px;right:12px;width:372px;max-height:calc(100% - 62px);overflow:auto;background:var(--surface);border-radius:16px;box-shadow:var(--float);z-index:5;transform-origin:top right;display:none}
+.ext{position:absolute;top:50px;right:12px;width:372px;max-height:calc(100% - 62px);overflow:auto;scrollbar-gutter:stable;background:var(--surface);border-radius:16px;box-shadow:var(--float);z-index:5;transform-origin:top right;display:none}
 .ext.open{display:block;animation:sheet .32s var(--ease)}
 @keyframes sheet{from{opacity:0;transform:translateY(-6px) scale(.97)}}
 .ext-h{display:flex;align-items:center;gap:9px;padding:14px 16px 12px}
@@ -135,9 +135,11 @@ main.v-business{grid-template-columns:minmax(0,1fr)} main.v-business #paneShop{d
 .rail{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
 .rail.cbdc{color:var(--iris);border-color:var(--iris-line);background:var(--iris-tint)}
 .checks{list-style:none;margin:10px 0 0;padding:0 16px}
-.checks li{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:9px 0;opacity:0;transform:translateY(4px);transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.checks li{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:9px 0}
 .checks li+li{border-top:1px solid var(--line)}
-.checks li.show{opacity:1;transform:none}
+.sk{color:transparent;border-radius:4px;background:linear-gradient(90deg,#ECEEF3 0%,#F7F8FA 50%,#ECEEF3 100%);background-size:200% 100%;animation:shimmer 1.2s linear infinite;-webkit-box-decoration-break:clone;box-decoration-break:clone;transition:color .35s var(--ease),background-color .35s}
+.sk.done{color:inherit;background:none;animation:none}
+@keyframes shimmer{to{background-position:-200% 0}}
 .checks .t{font-weight:600;font-size:13px}
 .checks .d{color:var(--ink-3);font-size:12px;line-height:1.4;margin-top:1px}
 .ic{width:20px;height:20px;min-width:20px;flex:none;border-radius:50%;display:grid;place-items:center;margin-top:1px;overflow:hidden}
@@ -697,7 +699,6 @@ function loadScenario(key, keepView = false) {
         <div class="total"><span>Total</span><b class="num">${money(it.price)}</b></div>
         <div class="methods">
           ${method(false, WICON.card, 'Card', 'Visa ending 4421')}
-          ${method(!crypto, WICON.pound, 'Pay by bank', 'Instant bank transfer')}
           ${method(crypto, WICON.crypto, 'Crypto', 'GBPx stablecoin from a wallet or exchange')}
         </div>
         ${walletRows(sc)}
@@ -732,12 +733,13 @@ async function startPayment() {
     <ul class="checks" id="checks"></ul><div class="verdict" id="verdict"></div>`;
   ext.classList.add('open');
   const ul = $('checks');
-  for (const c of tx.checks) {
-    const li = document.createElement('li');
-    li.innerHTML = `<span class="ic pending">${SPIN}</span><div><div class="t">${esc(c.t)}</div><div class="d">Checking</div></div>`;
-    ul.appendChild(li); await sleep(20); li.classList.add('show'); await sleep(360);
-    const ic = li.querySelector('.ic'); ic.className = 'ic ' + c.s; ic.innerHTML = ICON[c.s];
-    li.querySelector('.d').textContent = c.d;
+  ul.innerHTML = tx.checks.map(c => `<li><span class="ic pending">${SPIN}</span><div><div class="t">${esc(c.t)}</div><div class="d"><span class="sk">${esc(c.d)}</span></div></div></li>`).join('');
+  const rows = [...ul.children];
+  for (let i = 0; i < rows.length; i++) {
+    await sleep(i ? 380 : 260);
+    const c = tx.checks[i], ic = rows[i].querySelector('.ic');
+    ic.className = 'ic ' + c.s; ic.innerHTML = ICON[c.s];
+    rows[i].querySelector('.sk').classList.add('done');
   }
   await sleep(200);
   renderShopper(tx, true);
