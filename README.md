@@ -3,7 +3,7 @@
 Two-way trust checks for digital-asset payments.
 FIS Digital Assets Hackathon 2026, Challenge 1 prototype. All data is synthetic.
 
-## What's in here
+## What's in here?
 
 | File | What it does |
 |---|---|
