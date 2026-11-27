@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
 <title>Countersign</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +24,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
 body{font:14px/1.45 var(--ui);color:var(--ink);background:var(--bg);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 0}
-button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--iris);outline-offset:2px;border-radius:8px}
 .num{font-variant-numeric:tabular-nums}
 .mono{font-family:var(--mono);font-size:12px;letter-spacing:-.01em}
@@ -318,13 +319,14 @@ main.v-shopper #paneShop,main.v-business #paneBiz{flex:1 1 auto}
 
 /* api */
 .call{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
-.call .ch{display:flex;gap:10px;align-items:center;padding:8px 12px;font-size:13px;background:var(--surface-2)}
+.call .ch{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;padding:8px 12px;font-size:13px;background:var(--surface-2)}
+.call .ch .mono{min-width:0;overflow-wrap:anywhere}
 .call .m{font-weight:700}
 .call .code{margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums}
 .call pre{margin:0;padding:10px 12px;font:12px/1.5 var(--mono);max-height:200px;overflow:auto;background:#17151F;color:#DCD9EA;white-space:pre-wrap;word-break:break-word}
 
 /* toast */
-.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,12px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;box-shadow:var(--float);opacity:0;transition:opacity .25s var(--ease),transform .35s var(--ease);pointer-events:none;z-index:30;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:max(24px,calc(env(safe-area-inset-bottom) + 12px));max-width:calc(100vw - 32px);box-sizing:border-box;text-align:center;transform:translate(-50%,12px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;box-shadow:var(--float);opacity:0;transition:opacity .25s var(--ease),transform .35s var(--ease);pointer-events:none;z-index:30}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 @container shop (max-width:720px){.m-body{grid-template-columns:minmax(0,1fr);gap:18px}.prod .art{aspect-ratio:auto;height:180px}.co{max-width:460px}}
@@ -332,6 +334,36 @@ main.v-shopper #paneShop,main.v-business #paneBiz{flex:1 1 auto}
 @container biz (max-width:600px){.kv{grid-template-columns:minmax(0,1fr);gap:0}.kv dd{margin-bottom:8px}.c-head .who>span:first-child{display:none}.drow{grid-template-columns:auto minmax(0,1fr)}.drow .when{grid-column:2;text-align:left}.rc-top{flex-wrap:wrap}.acts .btn{flex:1}.liab-in .row .btn{flex:1}}
 @container biz (max-width:460px){.c-head .by{border-left:0;padding-left:0;margin-left:0;flex-basis:100%;order:3}.c-head .who{margin-left:0;width:100%;order:4}.tabs{gap:0;padding:8px 8px 0}.tabs button{padding:9px 7px 11px}.clock{flex-basis:100%;margin-left:44px;text-align:left;display:flex;gap:6px;align-items:baseline}.clock b{display:inline;font-size:14px}.rc-sec,.rc-top{padding-left:14px;padding-right:14px}}
 @media (max-width:900px){main{flex-direction:column;gap:18px}#paneShop,#paneBiz{flex:none;min-width:0}.divider{display:none}.browser{min-height:760px}.console{min-height:640px}}
+.vcount{display:none;min-width:18px;height:18px;border-radius:9px;background:var(--hold);color:#fff;font-size:11px;font-weight:700;place-items:center;padding:0 5px;margin-left:6px;font-variant-numeric:tabular-nums}
+@media (max-width:760px){
+  html,body{height:auto;min-height:100%}
+  body{min-height:100dvh}
+  .top{gap:10px;padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 10px max(12px,env(safe-area-inset-left));position:sticky;top:0;z-index:20}
+  .brand{margin-right:0}
+  .spacer{display:none}
+  #viewSeg{margin-left:auto}
+  #viewSeg button[data-v="split"]{display:none}
+  #viewSeg button,.reset{min-height:40px}
+  .vcount.on{display:inline-grid}
+  #scenSeg{order:5;flex-basis:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  #scenSeg::-webkit-scrollbar{display:none}
+  #scenSeg button{min-height:40px;scroll-snap-align:center;flex:none}
+  .seg button .k{display:none}
+  main{padding:12px max(12px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+  .pane-h{margin-bottom:8px}
+  .pane-h span{display:none}
+  .browser,.console{min-height:calc(100dvh - 190px)}
+  .chrome{gap:8px;padding:8px}
+  .lights,.navs{display:none}
+  .url{font-size:12px;padding:6px 9px}
+  .extbtn{width:36px;height:34px}
+  .ext{top:48px}
+  .edit input{font-size:16px}
+  .btn{min-height:44px}
+  .tab{padding:14px 14px 24px}
+  .call pre{font-size:11px}
+}
+@media (max-width:420px){.brand b{display:none}.reset{padding:8px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -349,7 +381,7 @@ main.v-shopper #paneShop,main.v-business #paneBiz{flex:1 1 auto}
   <div class="spacer"></div>
   <nav class="seg" id="viewSeg" aria-label="View">
     <span class="thumb"></span>
-    <button data-v="split">Both</button><button data-v="shopper">Shopper</button><button data-v="business">Business</button>
+    <button data-v="split">Both</button><button data-v="shopper">Shopper</button><button data-v="business">Business<span class="vcount" id="vCnt"></span></button>
   </nav>
   <button class="reset" id="resetBtn" title="Clear everything and start again (R)">Reset</button>
 </header>
@@ -698,6 +730,7 @@ function walletRows(sc) {
 function loadScenario(key, keepView = false) {
   const sc = SC[key], m = sc.merchant, it = sc.item, crypto = sc.rail !== 'cbdc';
   document.querySelectorAll('#scenSeg button').forEach(b => b.classList.toggle('on', b.dataset.s === key)); moveThumb($('scenSeg'));
+  document.querySelector('#scenSeg button.on')?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
   if (VIEW === 'business' && !keepView) setView('split');
   $('urlText').innerHTML = `<span class="host">${esc(m.domain)}</span><span>${esc(m.path)}</span>`;
   closeExt(); setDot(null);
@@ -768,6 +801,7 @@ async function startPayment() {
   animating = false;
   await refresh(true);
   switchTab(tx.status === 'HOLD' ? 'queue' : 'decisions');
+  if (PHONE.matches && tx.status === 'HOLD') toast('Held for review. Open Business to decide.');
 }
 
 function renderShopper(tx, fresh = false) {
@@ -842,6 +876,7 @@ function renderQueue() {
   const el = $('tab-queue');
   const items = B.queue.map(id => B.decisions.find(t => t.id === id)).filter(Boolean);
   const c = $('qCnt'); const was = c.textContent; c.textContent = items.length;
+  const vc = $('vCnt'); vc.textContent = items.length; vc.classList.toggle('on', items.length > 0);
   c.classList.toggle('on', items.length > 0); if (items.length && was !== String(items.length)) { c.classList.remove('on'); void c.offsetWidth; c.classList.add('on'); }
   if (!items.length) { el.innerHTML = `<div class="blank"><b>Nothing to review</b>Held payments arrive here with the reasons, the customer’s answer and a 15 minute clock.</div>`; return; }
   el.innerHTML = items.map(tx => {
@@ -995,9 +1030,11 @@ function switchTab(t) {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x.id === 'tab-' + t));
   moveBar();
 }
+const PHONE = window.matchMedia('(max-width:760px)');
+const shown = () => (PHONE.matches && VIEW === 'split') ? 'shopper' : VIEW;
 function setView(v) {
-  VIEW = v; $('main').className = v === 'split' ? '' : 'v-' + v;
-  document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === v)); moveThumb($('viewSeg'));
+  VIEW = v; const e = shown(); $('main').className = e === 'split' ? '' : 'v-' + e;
+  document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === e)); moveThumb($('viewSeg'));
   const u = new URL(location.href); u.searchParams.set('view', v); if (ROOM !== 'demo') u.searchParams.set('room', ROOM);
   try { history.replaceState(null, '', u); } catch (e) { /* not allowed for file:// pages */ }
   requestAnimationFrame(() => { moveBar(); moveThumb($('scenSeg')); });
@@ -1028,6 +1065,7 @@ document.addEventListener('keydown', e => {
   if (e.key.toLowerCase() === 'r') reset();
 });
 window.addEventListener('resize', () => { moveThumb($('scenSeg')); moveThumb($('viewSeg')); moveBar(); });
+PHONE.addEventListener?.('change', () => setView(VIEW));
 /* draggable split between the shopper and business panels */
 {
   const main = $('main'), dv = $('divider');
